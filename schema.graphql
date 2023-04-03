@@ -1,0 +1,42 @@
+scalar Date
+
+interface Node {
+  id: ID!
+}
+
+type Reaction {
+  type: ReactionType!
+}
+
+interface Reactable {
+  reactions: [Reaction!]!
+}
+
+interface Commentable {
+  comments: [Post!]!
+}
+
+type Post implements Node, Reactable, Commentable {
+  id: ID!
+  createdAt: Date!
+  comments: [Post!]!
+  reactions: [Reaction!]!
+  content: String!
+}
+
+enum ReactionType {
+  THUMBSUP
+  THUMBSDOWN
+  ROCKET
+  HEART
+}
+
+type Query {
+  node(id: ID!): Node
+  posts(id: ID, first: Int, after: String): [Post!]
+}
+
+type Mutation {
+  post(content: String!, postId: ID): Post
+  react(postId: ID!, type: ReactionType!): Post
+}
