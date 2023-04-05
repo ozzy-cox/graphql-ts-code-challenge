@@ -1,18 +1,10 @@
 import { createPost } from '../src/entities/post'
 
 describe('creating a post', () => {
-  const post = createPost()
-
-  test('to be defined', () => {
-    expect(post).toBeDefined()
-  })
-
-  test('content is empty', () => {
-    expect(post?.content).toBe('empty')
-  })
-
-  test('has a creation date', () => {
-    expect(post).toHaveProperty('createdAt')
+  test('without content', () => {
+    expect(() => {
+      createPost()
+    }).toThrow('Content cannot be empty')
   })
 })
 
@@ -54,8 +46,8 @@ describe('creating post with different length of content', () => {
 })
 
 describe('creating multiple posts', () => {
-  const postOne = createPost()
-  const postTwo = createPost()
+  const postOne = createPost('Have a nice day')
+  const postTwo = createPost('Thank you')
 
   test('to have id', () => {
     expect(postOne).toHaveProperty('id')
