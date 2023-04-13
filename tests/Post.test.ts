@@ -1,41 +1,41 @@
-import { createPost } from '../src/entities/post'
+import { PostController } from '../src/entities/Post'
+import { PostRepository } from '../src/repositories/EntityRepository'
 
 describe('creating a post', () => {
+  const postRepository = new PostRepository()
+  const postController = new PostController(postRepository)
   test('without content', () => {
-    expect(() => {
-      createPost()
-    }).toThrow('Content cannot be empty')
+    expect(async () => {
+      await postController.createPost()
+    }).rejects.toThrow('Content cannot be empty')
   })
-})
 
-describe('creating a post with content', () => {
-  const content = 'Lorem ipsum'
-  const post = createPost(content)
-
-  test('has content property', () => {
+  test('has content property', async () => {
+    const content = 'Lorem ipsum'
+    const post = await postController.createPost(content)
     expect(post).toHaveProperty('content')
   })
 
-  test('has content set correctly when passed in', () => {
+  test('has content set correctly when passed in', async () => {
+    const content = 'Lorem ipsum'
+    const post = await postController.createPost(content)
     expect(post && post.content).toEqual(content)
   })
-})
 
-describe('creating post with different length of content', () => {
-  const createPostWithMoreThan280Chars = () => {
+  const createPostWithMoreThan280Chars = async () => {
     const content =
       'Duis voluptate labore est irure occaecat elit consectetur reprehenderit excepteur tempor cupidatat nulla quis. Voluptate ex qui labore ipsum eu sunt duis commodo labore non. Qui in officia anim elit dolor deserunt elit. Tempor elit labore eu irure sit ipsum non velit irure. Sit eiusmod cillum tempor sit ipsum ex ullamco est labore.'
-    return createPost(content)
+    return await postController.createPost(content)
   }
 
-  const createPostWithLessThanOrEqualTo280Chars = () => {
+  const createPostWithLessThanOrEqualTo280Chars = async () => {
     const content =
       'Duis voluptate labore est irure occaecat elit consectetur reprehenderit excepteur tempor cupidatat nulla quis. Voluptate ex qui labore ipsum eu sunt duis commodo labore non. Qui in officia anim elit dolor deserunt elit. Tempor elit labore eu irure sit ipsum non velit irure.'
-    return createPost(content)
+    return await postController.createPost(content)
   }
 
   test('creating content with more than 280 characters', () => {
-    expect(createPostWithMoreThan280Chars).toThrow('You cannot send a post which has more than 280 characters')
+    expect(createPostWithMoreThan280Chars).rejects.toThrow('You cannot send a post which has more than 280 characters')
   })
 
   test('creating content with less than or equal to 280 characters', () => {
@@ -43,21 +43,37 @@ describe('creating post with different length of content', () => {
       'You cannot send a post which has more than 280 characters'
     )
   })
+
+  test('to have id', async () => {
+    const postOne = await postController.createPost('Have a nice day')
+    const postTwo = await postController.createPost('Thank you')
+
+    expect(postOne).toHaveProperty('id')
+
+    expect(postOne && typeof postOne.id).toBe('number')
+
+    expect(postOne && postOne.id).not.toEqual(postTwo && postTwo.id)
+  })
 })
 
-describe('creating multiple posts', () => {
-  const postOne = createPost('Have a nice day')
-  const postTwo = createPost('Thank you')
+describe('listing posts', () => {
+  const postRepository = new PostRepository()
+  const postController = new PostController(postRepository)
+  test('should throw an error when inputs are not integers', () => {
+    expect(async () => {
+      await postController.listPosts(0.5, 11)
+    }).rejects.toThrow('Inputs must be integers')
 
-  test('to have id', () => {
-    expect(postOne).toHaveProperty('id')
+    expect(async () => {
+      await postController.listPosts(0.5, 0.2)
+    }).rejects.toThrow('Inputs must be integers')
   })
 
-  test('to have valid id', () => {
-    expect(postOne && typeof postOne.id).toBe('number')
-  })
+  test('should list one post when one post is created', async () => {
+    await postController.createPost('Have a nice day')
+    const posts = await postController.listPosts(0, 5)
 
-  test('to have different ids', () => {
-    expect(postOne && postOne.id).not.toEqual(postTwo && postTwo.id)
+    console.log(posts)
+    expect(posts.length).toBe(1)
   })
 })

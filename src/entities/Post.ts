@@ -1,16 +1,30 @@
+import { isInteger } from 'lodash'
+import { PostRepository } from '../repositories/EntityRepository'
+
 export type Post = {
   id: number
   content: string
   createdAt: Date
 }
 
-let postId = 0
-export const createPost = (content?: string): Post | undefined => {
-  if (!content) throw new Error('Content cannot be empty')
-  if (content && content.length > 280) throw new Error('You cannot send a post which has more than 280 characters')
+export class PostController {
+  postRepository: PostRepository
+  constructor(postRepository: PostRepository) {
+    this.postRepository = postRepository
+  }
 
-  const post: Post = { id: postId, content: content, createdAt: new Date() }
-  postId++
+  createPost = async (content?: string): Promise<Post | undefined> => {
+    if (!content) throw new Error('Content cannot be empty')
+    if (content && content.length > 280) throw new Error('You cannot send a post which has more than 280 characters')
 
-  return post
+    return this.postRepository.add({ content })
+  }
+
+  listPosts = (offset: number, take: number): Promise<Post[]> => {
+    if (!isInteger(offset) || !isInteger(take)) {
+      throw new Error('Inputs must be integers')
+    }
+
+    return this.postRepository.list(offset, take)
+  }
 }
