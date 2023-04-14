@@ -1,8 +1,8 @@
 import { PostController } from '../src/entities/Post'
-import { PostRepository } from '../src/repositories/EntityRepository'
+import { InMemoryPostRepository } from '../src/repositories/EntityRepository'
 
 describe('creating a post', () => {
-  const postRepository = new PostRepository()
+  const postRepository = new InMemoryPostRepository()
   const postController = new PostController(postRepository)
   test('without content', () => {
     expect(async () => {
@@ -57,7 +57,7 @@ describe('creating a post', () => {
 })
 
 describe('listing posts', () => {
-  const postRepository = new PostRepository()
+  const postRepository = new InMemoryPostRepository()
   const postController = new PostController(postRepository)
   test('should throw an error when inputs are not integers', () => {
     expect(async () => {

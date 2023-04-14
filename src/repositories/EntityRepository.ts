@@ -1,7 +1,7 @@
 import { Post } from '../entities/Post'
 import { Repository } from './RepositoryInterface'
 
-export class PostRepository implements Repository<Post> {
+export class InMemoryPostRepository implements Repository<Post> {
   lastId = 0
   posts: Post[] = []
 

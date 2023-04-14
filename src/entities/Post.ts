@@ -1,5 +1,5 @@
 import { isInteger } from 'lodash'
-import { PostRepository } from '../repositories/EntityRepository'
+import { Repository } from '../repositories/RepositoryInterface'
 
 export type Post = {
   id: number
@@ -8,8 +8,8 @@ export type Post = {
 }
 
 export class PostController {
-  postRepository: PostRepository
-  constructor(postRepository: PostRepository) {
+  postRepository: Repository<Post>
+  constructor(postRepository: Repository<Post>) {
     this.postRepository = postRepository
   }
 
