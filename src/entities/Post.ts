@@ -1,5 +1,5 @@
 import { isInteger } from 'lodash'
-import { Repository } from '../repositories/RepositoryInterface'
+import { Repository } from '@/repositories/RepositoryInterface'
 
 export type Node = {
   id: string

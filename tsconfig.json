@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "module": "commonjs",
     "lib": [
-      
-      "es6"
+      "esnext"
     ],
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "src/*",
         "src/*.ts"
-      ],
+      ]
     },
     "allowJs": true,
     "outDir": "build",
@@ -20,6 +19,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": true
   }
 }

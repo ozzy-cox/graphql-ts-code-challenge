@@ -15,7 +15,6 @@ export class InMemoryPostRepository implements Repository<Post> {
       this.posts.push(post)
       this.lastId += 1
       resolve(post)
-      /**   */
     })
   }
 

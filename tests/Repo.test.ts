@@ -1,4 +1,5 @@
-import { Repository } from '../src/repositories/RepositoryInterface'
+import { Repository } from '@/repositories/RepositoryInterface'
+
 import { MikroORM, SqliteDriver } from '@mikro-orm/sqlite' // or any other driver package
 
 describe('using persistent mikroorm repo impl', () => {
