@@ -1,10 +1,13 @@
 import { isInteger } from 'lodash'
 import { Repository } from '../repositories/RepositoryInterface'
 
-export type Post = {
-  id: number
-  content: string
+export type Node = {
+  id: string
   createdAt: Date
+}
+
+export interface Post extends Node {
+  content: string
 }
 
 export class PostController {

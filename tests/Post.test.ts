@@ -1,5 +1,5 @@
-import { PostController } from '../src/entities/Post'
-import { InMemoryPostRepository } from '../src/repositories/EntityRepository'
+import { PostController } from '@/entities/Post'
+import { InMemoryPostRepository } from '@/repositories/EntityRepository'
 
 describe('creating a post', () => {
   const postRepository = new InMemoryPostRepository()
@@ -49,8 +49,6 @@ describe('creating a post', () => {
     const postTwo = await postController.createPost('Thank you')
 
     expect(postOne).toHaveProperty('id')
-
-    expect(postOne && typeof postOne.id).toBe('number')
 
     expect(postOne && postOne.id).not.toEqual(postTwo && postTwo.id)
   })
