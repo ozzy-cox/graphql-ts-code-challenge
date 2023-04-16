@@ -9,3 +9,4 @@ import { Post } from './lib/orm/entities'
   console.log(postRepo)
   orm.em.fork().persistAndFlush([post])
 })()
+
