@@ -1,4 +1,4 @@
-import { Node, Post } from './src/lib/orm/entities'
+import { Node, Post } from './lib/orm/entities'
 import { Options } from '@mikro-orm/core'
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
 
