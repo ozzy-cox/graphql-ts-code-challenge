@@ -40,7 +40,7 @@ export class ORMPostRepository implements Repository<IPost> {
 
   async add(post: Omit<IPost, 'id' | 'createdAt'>) {
     const postEntity = new Post(post)
-    this.repository.persistAndFlush(postEntity)
-    return post as Post
+    await this.repository.persistAndFlush(postEntity)
+    return postEntity as Post
   }
 }

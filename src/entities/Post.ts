@@ -16,7 +16,7 @@ export class PostController {
     this.postRepository = postRepository
   }
 
-  createPost = async (content?: string): Promise<Post | undefined> => {
+  createPost = (content?: string): Promise<Post | undefined> => {
     if (!content) throw new Error('Content cannot be empty')
     if (content && content.length > 280) throw new Error('You cannot send a post which has more than 280 characters')
 
