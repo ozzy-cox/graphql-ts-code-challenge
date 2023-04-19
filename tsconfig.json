@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "rootDir": "src",
+    "target": "es2017",
     "lib": [
       "esnext"
     ],
@@ -13,7 +16,6 @@
       ]
     },
     "allowJs": true,
-    "outDir": "build",
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
