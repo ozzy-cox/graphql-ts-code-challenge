@@ -1,4 +1,4 @@
-import { isInteger } from 'lodash'
+import { isInteger } from 'lodash-es'
 import { Repository } from '@/repositories/RepositoryInterface'
 
 export type Node = {
