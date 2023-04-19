@@ -16,7 +16,7 @@ interface Commentable {
   comments: [Post!]!
 }
 
-type Post implements Node, Reactable, Commentable {
+type Post implements Node & Reactable & Commentable {
   id: ID!
   createdAt: Date!
   comments: [Post!]!
