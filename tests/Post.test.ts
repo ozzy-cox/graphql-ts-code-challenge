@@ -1,9 +1,13 @@
 import { Post, PostController } from '@/entities/Post'
+import { getEntityManager, getOrm } from '@/lib/orm/orm'
+import { InMemoryPostRepository, ORMPostRepository } from '@/repositories/EntityRepository'
 import { Repository } from '@/repositories/RepositoryInterface'
+import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core'
+import { SqlEntityRepository } from '@mikro-orm/sqlite'
 
 export const testCreatingPosts = (postRepository: Repository<Post>) => {
-  const postController = new PostController(postRepository)
-  describe('creating a post', () => {
+  describe('creating posts', () => {
+    const postController = new PostController(postRepository)
     test('without content', () => {
       expect(async () => {
         await postController.createPost()
@@ -46,7 +50,7 @@ export const testCreatingPosts = (postRepository: Repository<Post>) => {
       )
     })
 
-    test('to have id', async () => {
+    test('should have id', async () => {
       const postOne = await postController.createPost('Have a nice day')
       const postTwo = await postController.createPost('Thank you')
 
@@ -58,8 +62,8 @@ export const testCreatingPosts = (postRepository: Repository<Post>) => {
 }
 
 export const testListingPosts = (postRepository: Repository<Post>) => {
-  const postController = new PostController(postRepository)
   describe('listing posts', () => {
+    const postController = new PostController(postRepository)
     test('should throw an error when inputs are not integers', () => {
       expect(async () => {
         await postController.listPosts(0.5, 11)
@@ -78,3 +82,26 @@ export const testListingPosts = (postRepository: Repository<Post>) => {
     })
   })
 }
+
+describe('post operations on in memory repo', () => {
+  testCreatingPosts(new InMemoryPostRepository())
+  testListingPosts(new InMemoryPostRepository())
+})
+
+const orm = await getOrm()
+const em = await getEntityManager()
+const schemaGenerator = orm.getSchemaGenerator()
+await schemaGenerator.refreshDatabase()
+const ormRepo = new ORMPostRepository(em)
+
+describe('on orm repo', () => {
+  describe('on orm repo', () => {
+    it('repo inited', () => {
+      expect(orm).not.toBeFalsy()
+      expect(ormRepo).not.toBeFalsy()
+    })
+
+    testCreatingPosts(ormRepo)
+    testListingPosts(ormRepo as unknown as Repository<Post>)
+  })
+})
