@@ -83,22 +83,24 @@ export const testListingPosts = (postRepository: Repository<Post>) => {
   })
 }
 
-describe('post operations on in memory repo', () => {
-  testCreatingPosts(new InMemoryPostRepository())
-  testListingPosts(new InMemoryPostRepository())
-})
-
 const orm = await getOrm()
 const em = await getEntityManager()
-const schemaGenerator = orm.getSchemaGenerator()
-await schemaGenerator.refreshDatabase()
 const ormRepo = new ORMPostRepository(em)
 
-describe('on orm repo', () => {
+describe('post operations', () => {
+  describe('on in memory repo', () => {
+    testCreatingPosts(new InMemoryPostRepository())
+    testListingPosts(new InMemoryPostRepository())
+  })
+
   describe('on orm repo', () => {
     it('repo inited', () => {
       expect(orm).not.toBeFalsy()
       expect(ormRepo).not.toBeFalsy()
+    })
+    beforeEach(async () => {
+      const schemaGenerator = orm.getSchemaGenerator()
+      await schemaGenerator.refreshDatabase()
     })
 
     testCreatingPosts(ormRepo)

@@ -34,8 +34,8 @@ export class ORMPostRepository implements Repository<IPost> {
     this.repository = em.getRepository(Post)
   }
 
-  list(offset: number, take: number): Promise<IPost[]> {
-    throw new Error('Method not implemented.')
+  async list(offset: number, take: number): Promise<IPost[]> {
+    return await this.repository.find({}, { offset, limit: take })
   }
 
   async add(post: Omit<IPost, 'id' | 'createdAt'>) {
