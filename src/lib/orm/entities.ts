@@ -14,8 +14,8 @@ export class Post extends Node implements IPost {
   @Property()
   content!: string
 
-  constructor(content: string) {
+  constructor(post: Omit<IPost, 'id' | 'createdAt'>) {
     super()
-    this.content = content
+    this.content = post.content
   }
 }
