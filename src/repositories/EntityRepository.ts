@@ -21,9 +21,9 @@ export class InMemoryPostRepository implements Repository<IPost> {
     })
   }
 
-  list(offset: number, take: number): Promise<IPost[]> {
+  list(offset: number, limit: number): Promise<IPost[]> {
     return new Promise((resolve) => {
-      resolve(this.posts.slice(offset, offset + take))
+      resolve(this.posts.slice(offset, offset + limit))
     })
   }
 }
@@ -34,8 +34,8 @@ export class ORMPostRepository implements Repository<IPost> {
     this.repository = em.getRepository(Post)
   }
 
-  async list(offset: number, take: number): Promise<IPost[]> {
-    return await this.repository.find({}, { offset, limit: take })
+  async list(offset: number, limit: number): Promise<IPost[]> {
+    return await this.repository.find({}, { offset, limit })
   }
 
   async add(post: Omit<IPost, 'id' | 'createdAt'>) {
