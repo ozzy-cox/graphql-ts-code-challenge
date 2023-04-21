@@ -1,5 +1,5 @@
 import { MikroORM } from '@mikro-orm/sqlite' // or any other driver package
-import config from '../src/mikro-orm.config'
+import config from '../src/mikro-orm-test.config'
 
 describe('using persistent mikroorm repo impl', () => {
   test('should instantiate a post repository', async () => {

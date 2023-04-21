@@ -1,9 +1,8 @@
 import { Post, PostController } from '@/entities/Post'
-import { getEntityManager, getOrm } from '@/lib/orm/orm'
+import { getOrm } from '@/lib/orm/orm'
 import { InMemoryPostRepository, ORMPostRepository } from '@/repositories/EntityRepository'
 import { Repository } from '@/repositories/RepositoryInterface'
-import { Connection, IDatabaseDriver, MikroORM } from '@mikro-orm/core'
-import { SqlEntityRepository } from '@mikro-orm/sqlite'
+import config from '@/mikro-orm-test.config'
 
 export const testCreatingPosts = (postRepository: Repository<Post>) => {
   describe('creating posts', () => {
@@ -83,8 +82,8 @@ export const testListingPosts = (postRepository: Repository<Post>) => {
   })
 }
 
-const orm = await getOrm()
-const em = await getEntityManager()
+const orm = await getOrm(config)
+const em = orm.em.fork()
 const ormRepo = new ORMPostRepository(em)
 
 describe('post operations', () => {
