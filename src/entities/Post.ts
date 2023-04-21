@@ -23,11 +23,11 @@ export class PostController {
     return this.postRepository.add({ content })
   }
 
-  listPosts = (offset: number, take: number): Promise<Post[]> => {
-    if (!isInteger(offset) || !isInteger(take)) {
+  listPosts = (offset: number, limit: number): Promise<Post[]> => {
+    if (!isInteger(offset) || !isInteger(limit)) {
       throw new Error('Inputs must be integers')
     }
 
-    return this.postRepository.list(offset, take)
+    return this.postRepository.list(offset, limit)
   }
 }
