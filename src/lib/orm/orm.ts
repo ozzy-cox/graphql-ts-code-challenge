@@ -1,11 +1,4 @@
-import { MikroORM } from '@mikro-orm/core'
-import config from '@/mikro-orm.config'
-export const orm = MikroORM.init(config)
-
-export const getEntityManager = async () => {
-  return (await orm).em.fork()
-}
-
-export const getOrm = async () => {
-  return await orm
+import { MikroORM, Options } from '@mikro-orm/core'
+export const getOrm = async (config: Options) => {
+  return await MikroORM.init(config)
 }

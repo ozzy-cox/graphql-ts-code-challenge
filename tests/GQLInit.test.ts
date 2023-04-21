@@ -1,4 +1,4 @@
-import { initServer } from '@/lib/gql/init'
+import { initServer } from '@/lib/gql/server'
 
 describe('initializing gql', () => {
   test('should initialize apollo server', async () => {
