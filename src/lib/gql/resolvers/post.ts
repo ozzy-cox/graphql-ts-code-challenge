@@ -1,9 +1,10 @@
-import { PostController } from '@/entities/Post'
+import { Post, PostController } from '@/entities/Post'
 import { Context } from '../context'
 import { ORMPostRepository } from '@/repositories/EntityRepository'
 import { getOrm } from '@/lib/orm/orm'
 // TODO Remove
 import config from '@/mikro-orm-test.config'
+import { toGlobalId } from 'graphql-relay'
 
 export const resolvers = {
   Query: {
@@ -30,5 +31,9 @@ export const resolvers = {
       return postController.listPosts(args.offset, args.limit)
     }
   },
-  Post: {}
+  Post: {
+    id: (parent: Post) => {
+      return toGlobalId('Post', parent.id)
+    }
+  }
 }
