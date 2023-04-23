@@ -8,6 +8,7 @@ import { EntityRepository } from '@mikro-orm/core'
 import config from '@/mikro-orm-test.config'
 import { initDBStateForTest } from '../src/initDBStateForTest'
 import assert from 'node:assert'
+import { toGlobalId } from 'graphql-relay'
 
 describe('querying server', () => {
   let testServer: ApolloServer<Context>
@@ -32,7 +33,9 @@ describe('querying server', () => {
     const query = `#graphql
         query Posts($offset: Int, $limit: Int) {
             posts(offset: $offset, limit: $limit) {
-                id
+                id,
+                content,
+                createdAt
             }
         }
     `
@@ -51,12 +54,11 @@ describe('querying server', () => {
         limit
       }
     )
-    console.log('db', dbPosts)
 
     assert(response.body.kind === 'single')
-    console.log(response.body.singleResult.errors)
     expect(response.body.singleResult.errors).toBeUndefined()
-    console.log(response.body.singleResult.data?.posts)
-    expect(response.body.singleResult.data?.posts).toEqual(dbPosts)
+    expect((response.body.singleResult.data?.posts as Post[]).map((post) => post.id)).toEqual(
+      dbPosts.map((post) => toGlobalId('Post', post.id))
+    )
   })
 })
