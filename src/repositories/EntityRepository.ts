@@ -12,7 +12,7 @@ export class InMemoryPostRepository implements Repository<IPost> {
     return new Promise((resolve, reject) => {
       const post = {
         ...partialEntity,
-        id: `${this.lastId}`,
+        id: this.lastId,
         createdAt: new Date()
       }
       this.posts.push(post)
