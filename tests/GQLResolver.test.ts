@@ -6,7 +6,7 @@ import { getOrm } from '@/lib/orm/orm'
 import { ApolloServer } from '@apollo/server'
 import { EntityRepository } from '@mikro-orm/core'
 import config from '@/mikro-orm-test.config'
-import { initDBStateForTest } from '../src/initDBStateForTest'
+import { initDBStateForTest, wipeDb } from '../src/initDBStateForTest'
 import assert from 'node:assert'
 import { toGlobalId } from 'graphql-relay'
 
@@ -21,6 +21,7 @@ describe('querying server', () => {
       resolvers
     })
 
+    await wipeDb()
     await initDBStateForTest()
     orm = await getOrm(config)
 
@@ -60,5 +61,10 @@ describe('querying server', () => {
     expect((response.body.singleResult.data?.posts as Post[]).map((post) => post.id)).toEqual(
       dbPosts.map((post) => toGlobalId('Post', post.id))
     )
+  })
+
+  afterAll(async () => {
+    await wipeDb()
+    await (await getOrm(config)).close()
   })
 })

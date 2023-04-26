@@ -3,6 +3,7 @@ import { getOrm } from '@/lib/orm/orm'
 import { InMemoryPostRepository, ORMPostRepository } from '@/repositories/EntityRepository'
 import { Repository } from '@/repositories/RepositoryInterface'
 import config from '@/mikro-orm-test.config'
+import { wipeDb } from '@/initDBStateForTest'
 
 export const testCreatingPosts = (postRepository: Repository<Post>) => {
   describe('creating posts', () => {
@@ -82,14 +83,35 @@ export const testListingPosts = (postRepository: Repository<Post>) => {
   })
 }
 
+export const testCreatingComments = (postRepository: Repository<Post>) => {
+  describe('creating comments', () => {
+    test('should create a comment on a post', async () => {
+      const commentContent = 'I fully agree with that statement'
+      const postController = new PostController(postRepository)
+
+      // There should be a post
+      const post = await postController.createPost('Lorem ipsum dolor sit amet')
+      const comment = post && (await postController.createPost(commentContent, post))
+
+      expect(post).not.toBeNull()
+      expect(post && post.id).toEqual(1)
+      expect(comment).not.toBeNull()
+      expect(comment).toHaveProperty('content')
+      expect(comment && comment.content).toEqual(commentContent)
+      expect(comment && comment.parent).toBe(post)
+    })
+  })
+}
 const orm = await getOrm(config)
 const em = orm.em.fork()
 const ormRepo = new ORMPostRepository(em)
 
 describe('post operations', () => {
+  // TODO Below are the real unit tests, should be moved out of this file
   describe('on in memory repo', () => {
     testCreatingPosts(new InMemoryPostRepository())
     testListingPosts(new InMemoryPostRepository())
+    testCreatingComments(new InMemoryPostRepository())
   })
 
   describe('on orm repo', () => {
@@ -98,11 +120,16 @@ describe('post operations', () => {
       expect(ormRepo).not.toBeFalsy()
     })
     beforeEach(async () => {
-      const schemaGenerator = orm.getSchemaGenerator()
-      await schemaGenerator.refreshDatabase()
+      await wipeDb()
     })
 
     testCreatingPosts(ormRepo)
     testListingPosts(ormRepo as unknown as Repository<Post>)
+    testCreatingComments(ormRepo)
+
+    afterAll(async () => {
+      await wipeDb()
+      await (await getOrm(config)).close()
+    })
   })
 })
