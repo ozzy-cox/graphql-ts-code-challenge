@@ -6,7 +6,7 @@ export type Node = {
 }
 
 export interface Post extends Node {
-  parentId?: number
+  parent?: Post
   content: string
   createdAt: Date
 }
@@ -17,11 +17,11 @@ export class PostController {
     this.postRepository = postRepository
   }
 
-  createPost = (content?: string, parentId?: number): Promise<Post | undefined> => {
+  createPost = (content?: string, parent?: Post): Promise<Post | undefined> => {
     if (!content) throw new Error('Content cannot be empty')
     if (content && content.length > 280) throw new Error('You cannot send a post which has more than 280 characters')
 
-    return this.postRepository.add({ content, parentId })
+    return this.postRepository.add({ content, parent })
   }
 
   listPosts = (offset?: number, limit?: number): Promise<Post[]> => {
