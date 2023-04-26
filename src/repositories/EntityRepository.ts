@@ -5,7 +5,7 @@ import { SqlEntityRepository } from '@mikro-orm/sqlite'
 import { Connection, EntityManager, IDatabaseDriver } from '@mikro-orm/core'
 
 export class InMemoryPostRepository implements Repository<IPost> {
-  lastId = 0
+  lastId = 1 // fake autoincrement id
   posts: IPost[] = []
 
   add(partialEntity: Omit<IPost, 'id' | 'createdAt'>): Promise<IPost> {
