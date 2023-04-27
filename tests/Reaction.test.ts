@@ -22,9 +22,6 @@ const testAddingReactions = (postRepository: IPostRepository, reactionRepository
     beforeAll(async () => {
       post = await postController.createPost(postContent)
       comment = await postController.createPost(commentContent, post)
-
-      console.log(post)
-      console.log(comment)
     })
 
     test('should add a reaction to a post', async () => {
@@ -62,7 +59,7 @@ describe('adding reactions', () => {
       expect(ormReactionRepository).not.toBeFalsy()
     })
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       await wipeDb()
     })
 
