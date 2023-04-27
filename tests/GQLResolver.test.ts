@@ -1,14 +1,14 @@
 import { Context } from '@/lib/gql/context'
 import { resolvers } from '@/lib/gql/resolvers/post'
 import { typeDefs } from '@/lib/gql/typeDefs'
-import { Post } from '@/lib/orm/entities'
+import { Post } from '@/lib/orm/models/Post'
 import { getOrm } from '@/lib/orm/orm'
 import { ApolloServer } from '@apollo/server'
-import { EntityRepository } from '@mikro-orm/core'
 import config from '@/mikro-orm-test.config'
 import { initDBStateForTest, wipeDb } from '../src/initDBStateForTest'
 import assert from 'node:assert'
 import { toGlobalId } from 'graphql-relay'
+import { EntityRepository } from '@mikro-orm/sqlite'
 
 describe('querying server', () => {
   let testServer: ApolloServer<Context>
@@ -21,9 +21,9 @@ describe('querying server', () => {
       resolvers
     })
 
-    await wipeDb()
-    await initDBStateForTest()
     orm = await getOrm(config)
+    await wipeDb()
+    await initDBStateForTest(orm)
 
     postRepository = orm.em.fork().getRepository(Post)
   })
@@ -66,5 +66,6 @@ describe('querying server', () => {
   afterAll(async () => {
     await wipeDb()
     await (await getOrm(config)).close()
+    await testServer.stop()
   })
 })
