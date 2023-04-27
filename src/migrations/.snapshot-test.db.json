@@ -5,12 +5,12 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "integer",
           "unsigned": true,
           "autoincrement": true,
-          "primary": false,
+          "primary": true,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "integer"
         },
         "created_at": {
           "name": "created_at",
@@ -30,10 +30,28 @@
           "primary": false,
           "nullable": false,
           "mappedType": "text"
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "integer"
         }
       },
       "name": "post",
       "indexes": [
+        {
+          "columnNames": [
+            "parent_id"
+          ],
+          "composite": false,
+          "keyName": "post_parent_id_index",
+          "primary": false,
+          "unique": false
+        },
         {
           "keyName": "primary",
           "columnNames": [
@@ -45,7 +63,104 @@
         }
       ],
       "checks": [],
-      "foreignKeys": {}
+      "foreignKeys": {
+        "post_parent_id_foreign": {
+          "constraintName": "post_parent_id_foreign",
+          "columnNames": [
+            "parent_id"
+          ],
+          "localTableName": "post",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "post",
+          "deleteRule": "set null",
+          "updateRule": "cascade"
+        }
+      }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "enumItems": [
+            "THUMBSUP",
+            "THUMBSDOWN",
+            "ROCKET",
+            "HEART"
+          ],
+          "mappedType": "enum"
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        }
+      },
+      "name": "reaction",
+      "indexes": [
+        {
+          "columnNames": [
+            "post_id"
+          ],
+          "composite": false,
+          "keyName": "reaction_post_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "primary",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "reaction_post_id_foreign": {
+          "constraintName": "reaction_post_id_foreign",
+          "columnNames": [
+            "post_id"
+          ],
+          "localTableName": "reaction",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "post",
+          "updateRule": "cascade"
+        }
+      }
     }
   ]
 }

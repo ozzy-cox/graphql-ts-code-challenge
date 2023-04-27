@@ -1,11 +1,11 @@
-import { Post, PostController } from '@/entities/Post'
+import { IPostRepository, Post, PostController } from '@/entities/Post'
 import { getOrm } from '@/lib/orm/orm'
-import { InMemoryPostRepository, ORMPostRepository } from '@/repositories/EntityRepository'
-import { Repository } from '@/repositories/RepositoryInterface'
+import { PostRepository } from '@/repositories/PostRepository'
 import config from '@/mikro-orm-test.config'
 import { wipeDb } from '@/initDBStateForTest'
+import { MockListableRepository } from '@/repositories/mock/InMemoryRepo'
 
-export const testCreatingPosts = (postRepository: Repository<Post>) => {
+export const testCreatingPosts = (postRepository: IPostRepository) => {
   describe('creating posts', () => {
     const postController = new PostController(postRepository)
     test('without content', () => {
@@ -61,7 +61,7 @@ export const testCreatingPosts = (postRepository: Repository<Post>) => {
   })
 }
 
-export const testListingPosts = (postRepository: Repository<Post>) => {
+export const testListingPosts = (postRepository: IPostRepository) => {
   describe('listing posts', () => {
     const postController = new PostController(postRepository)
     test('should throw an error when inputs are not integers', () => {
@@ -83,16 +83,20 @@ export const testListingPosts = (postRepository: Repository<Post>) => {
   })
 }
 
-export const testCreatingComments = (postRepository: Repository<Post>) => {
+export const testCreatingComments = (postRepository: IPostRepository) => {
   describe('creating comments', () => {
+    let post: Post | undefined
+    const postController = new PostController(postRepository)
+
+    beforeEach(async () => {
+      post = await postController.createPost('Lorem ipsum dolor sit amet')
+    })
+
     test('should create a comment on a post', async () => {
       const commentContent = 'I fully agree with that statement'
-      const postController = new PostController(postRepository)
 
       // There should be a post
-      const post = await postController.createPost('Lorem ipsum dolor sit amet')
       const comment = post && (await postController.createPost(commentContent, post))
-
       expect(post).not.toBeNull()
       expect(post && post.id).toEqual(1)
       expect(comment).not.toBeNull()
@@ -100,31 +104,54 @@ export const testCreatingComments = (postRepository: Repository<Post>) => {
       expect(comment && comment.content).toEqual(commentContent)
       expect(comment && comment.parent).toBe(post)
     })
+
+    test('should create a comment on a comment', async () => {
+      const commentContent = "That's a lovely idea."
+      const postController = new PostController(postRepository)
+
+      const comment = post && (await postController.createPost(commentContent, post))
+
+      const commentTwoContent = "I don't think that's such a great idea"
+
+      const commentOnComment = comment && (await postController.createPost(commentTwoContent, comment))
+
+      expect(comment).not.toBeNull()
+      expect(comment).toHaveProperty('content')
+      expect(comment && comment.content).toEqual(commentContent)
+
+      expect(commentOnComment).not.toBeNull()
+      expect(commentOnComment).toHaveProperty('content')
+      expect(commentOnComment && commentOnComment.content).toEqual(commentTwoContent)
+
+      expect(commentOnComment && commentOnComment.parent).toBe(comment)
+    })
   })
 }
 const orm = await getOrm(config)
 const em = orm.em.fork()
-const ormRepo = new ORMPostRepository(em)
+const ormRepo = new PostRepository(em)
 
 describe('post operations', () => {
   // TODO Below are the real unit tests, should be moved out of this file
   describe('on in memory repo', () => {
-    testCreatingPosts(new InMemoryPostRepository())
-    testListingPosts(new InMemoryPostRepository())
-    testCreatingComments(new InMemoryPostRepository())
+    testCreatingPosts(new MockListableRepository<Post>())
+    testListingPosts(new MockListableRepository<Post>())
+    testCreatingComments(new MockListableRepository<Post>())
   })
 
+  // TODO These connect to the db
   describe('on orm repo', () => {
     it('repo inited', () => {
       expect(orm).not.toBeFalsy()
       expect(ormRepo).not.toBeFalsy()
     })
+
     beforeEach(async () => {
       await wipeDb()
     })
 
     testCreatingPosts(ormRepo)
-    testListingPosts(ormRepo as unknown as Repository<Post>)
+    testListingPosts(ormRepo as unknown as IPostRepository)
     testCreatingComments(ormRepo)
 
     afterAll(async () => {

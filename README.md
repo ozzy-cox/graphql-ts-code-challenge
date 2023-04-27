@@ -1,0 +1,1 @@
+Note: remove type: module from package.json when migrating

@@ -1,6 +1,6 @@
 import { Post, PostController } from '@/entities/Post'
 import { Context } from '../context'
-import { ORMPostRepository } from '@/repositories/EntityRepository'
+import { PostRepository } from '@/repositories/PostRepository'
 import { getOrm } from '@/lib/orm/orm'
 // TODO Remove
 import config from '@/mikro-orm-test.config'
@@ -19,7 +19,7 @@ export const resolvers = {
     ) => {
       // TODO Move these to context
       const orm = await getOrm(config)
-      const _postController = new PostController(new ORMPostRepository(orm.em.fork()))
+      const _postController = new PostController(new PostRepository(orm.em.fork()))
       contextValue = {
         postController: _postController
       } as unknown as Context

@@ -1,19 +1,18 @@
 import { isInteger } from 'lodash-es'
-import { Repository } from '@/repositories/RepositoryInterface'
+import { Node } from './Node'
+import { Base } from './Base'
+import { ListableRepository } from '@/interfaces/Repository'
 
-export type Node = {
-  id: number
-}
-
-export interface Post extends Node {
+export interface Post extends Base, Node {
   parent?: Post
   content: string
-  createdAt: Date
 }
 
+export type IPostRepository = ListableRepository<Post>
+
 export class PostController {
-  postRepository: Repository<Post>
-  constructor(postRepository: Repository<Post>) {
+  postRepository: IPostRepository
+  constructor(postRepository: IPostRepository) {
     this.postRepository = postRepository
   }
 
