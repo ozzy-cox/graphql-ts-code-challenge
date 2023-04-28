@@ -19,7 +19,7 @@ interface Commentable {
 type Post implements Node & Reactable & Commentable {
   id: ID!
   createdAt: Date!
-  comments: [Post!]!
+  comments(flat: Boolean = False): [Post!]!
   reactions: [Reaction!]!
   content: String!
 }

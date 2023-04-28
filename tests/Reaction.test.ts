@@ -25,9 +25,10 @@ const testAddingReactions = (postRepository: IPostRepository, reactionRepository
     })
 
     test('should add a reaction to a post', async () => {
-      const reaction = post && (await reactionController.createReaction(ReactionType.THUMBSUP, post))
+      const type = ReactionType.THUMBSDOWN
+      const reaction = post && (await reactionController.createReaction(type, post))
 
-      expect(reaction?.type).toEqual(ReactionType.THUMBSUP)
+      expect(reaction?.type).toEqual(type)
       expect(reaction?.post).toBe(post)
     })
 
@@ -66,7 +67,7 @@ describe('adding reactions', () => {
     testAddingReactions(ormPostRepository, ormReactionRepository)
 
     afterAll(async () => {
-      // await wipeDb()
+      await wipeDb()
       await (await getOrm(config)).close()
     })
   })
