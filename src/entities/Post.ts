@@ -2,10 +2,13 @@ import { isInteger } from 'lodash-es'
 import { Node } from './Node'
 import { Base } from './Base'
 import { ListableRepository } from '@/interfaces/Repository'
+import { Reaction } from './Reaction'
 
 export interface Post extends Base, Node {
-  parent?: Post
+  post?: Post
   content: string
+  get comments(): Post[]
+  get reactions(): Reaction[]
 }
 
 export type IPostRepository = ListableRepository<Post>
@@ -16,11 +19,15 @@ export class PostController {
     this.postRepository = postRepository
   }
 
-  createPost = (content?: string, parent?: Post): Promise<Post | undefined> => {
+  createPost = (content?: string, post?: Post): Promise<Post | undefined> => {
     if (!content) throw new Error('Content cannot be empty')
     if (content && content.length > 280) throw new Error('You cannot send a post which has more than 280 characters')
 
-    return this.postRepository.add({ content, parent })
+    return this.postRepository.add({ content, post })
+  }
+
+  getComments = (post: Post): Promise<Post[]> => {
+    return this.postRepository.findBy({ post })
   }
 
   listPosts = (offset?: number, limit?: number): Promise<Post[]> => {

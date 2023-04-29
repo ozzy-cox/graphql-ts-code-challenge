@@ -9,17 +9,25 @@ export class Post extends Base implements IPost {
   content!: string
 
   @ManyToOne(() => Post)
-  parent?: Post
+  post?: IPost
 
-  @OneToMany(() => Post, (post) => post.parent)
-  comments? = new Collection<Post>(this)
+  @OneToMany(() => Post, (post) => post.post)
+  _comments? = new Collection<Post>(this)
 
   @OneToMany(() => Reaction, (reaction) => reaction.post)
-  reaction? = new Collection<Reaction>(this)
+  _reactions? = new Collection<Reaction>(this)
 
-  constructor(post: Omit<IPost, 'id' | 'createdAt'>) {
+  get comments(): Post[] {
+    return this._comments ? this._comments.getItems() : []
+  }
+
+  get reactions(): Reaction[] {
+    return this._reactions ? this._reactions.getItems() : []
+  }
+
+  constructor(post: Omit<Post, 'id' | 'createdAt'>) {
     super()
     this.content = post.content
-    this.parent = post.parent
+    this.post = post.post
   }
 }

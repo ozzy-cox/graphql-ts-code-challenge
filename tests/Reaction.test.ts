@@ -36,7 +36,7 @@ const testAddingReactions = (postRepository: IPostRepository, reactionRepository
       const type = ReactionType.THUMBSUP
       const reaction = comment && (await reactionController.createReaction(type, comment))
 
-      expect(comment?.parent).toBe(post)
+      expect(comment?.post).toBe(post)
       expect(reaction?.type).toEqual(type)
       expect(reaction?.post).toBe(comment)
     })
@@ -44,6 +44,7 @@ const testAddingReactions = (postRepository: IPostRepository, reactionRepository
 }
 
 const orm = await getOrm(config)
+
 const em = orm.em.fork()
 const ormPostRepository = new PostRepository(em)
 const ormReactionRepository = new ReactionRepository(em)

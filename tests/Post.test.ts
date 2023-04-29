@@ -102,7 +102,7 @@ export const testCreatingComments = (postRepository: IPostRepository) => {
       expect(comment).not.toBeNull()
       expect(comment).toHaveProperty('content')
       expect(comment && comment.content).toEqual(commentContent)
-      expect(comment && comment.parent).toBe(post)
+      expect(comment && comment.post).toBe(post)
     })
 
     test('should create a comment on a comment', async () => {
@@ -123,7 +123,7 @@ export const testCreatingComments = (postRepository: IPostRepository) => {
       expect(commentOnComment).toHaveProperty('content')
       expect(commentOnComment && commentOnComment.content).toEqual(commentTwoContent)
 
-      expect(commentOnComment && commentOnComment.parent).toBe(comment)
+      expect(commentOnComment && commentOnComment.post).toBe(comment)
     })
   })
 }
