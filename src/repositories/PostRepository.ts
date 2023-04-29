@@ -1,5 +1,5 @@
 import { Post } from '@/lib/orm/models/Post'
-import { Post as IPost, IPostRepository } from '../entities/Post'
+import { IPostRepository, Post as IPost } from '../entities/Post'
 import { SqlEntityRepository } from '@mikro-orm/sqlite'
 import { Connection, EntityManager, IDatabaseDriver } from '@mikro-orm/core'
 
@@ -17,5 +17,10 @@ export class PostRepository implements IPostRepository {
     const postEntity = new Post(post)
     await this.repository.persistAndFlush(postEntity)
     return postEntity as Post
+  }
+
+  // Culpa
+  async findBy(where: { [key: string]: unknown }) {
+    return this.repository.find(where)
   }
 }

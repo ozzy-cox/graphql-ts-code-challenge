@@ -14,4 +14,8 @@ export class ReactionRepository implements IReactionRepository {
     await this.repository.persistAndFlush(reactionEntity)
     return reactionEntity as IReaction
   }
+
+  async findBy(where: { [key: string]: unknown }) {
+    return this.repository.find(where)
+  }
 }

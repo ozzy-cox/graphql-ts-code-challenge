@@ -1,4 +1,4 @@
-import { Context } from '@/lib/gql/context'
+import { Context, context } from '@/lib/gql/context'
 import { resolvers } from '@/lib/gql/resolvers/post'
 import { typeDefs } from '@/lib/gql/typeDefs'
 import { Post } from '@/lib/orm/models/Post'
@@ -40,13 +40,18 @@ describe('querying server', () => {
             }
         }
     `
-    const response = await testServer.executeOperation({
-      query,
-      variables: {
-        offset,
-        limit
+    const response = await testServer.executeOperation(
+      {
+        query,
+        variables: {
+          offset,
+          limit
+        }
+      },
+      {
+        contextValue: await context()
       }
-    })
+    )
 
     const dbPosts = await postRepository.find(
       {},
