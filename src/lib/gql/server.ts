@@ -2,6 +2,7 @@ import { ApolloServer } from '@apollo/server'
 import { resolvers } from './resolvers/post'
 import { startStandaloneServer } from '@apollo/server/standalone'
 import { typeDefs } from './typeDefs'
+import { context } from './context'
 
 export const initServer = async () => {
   const server = new ApolloServer({
@@ -9,7 +10,8 @@ export const initServer = async () => {
     resolvers
   })
   const serverHandle = await startStandaloneServer(server, {
-    listen: { port: 4000 }
+    listen: { port: 4000 },
+    context
   })
 
   const { url } = serverHandle
