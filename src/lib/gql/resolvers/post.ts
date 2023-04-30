@@ -2,6 +2,7 @@ import { Post } from '@/entities/Post'
 import { Context } from '../context'
 import { toGlobalId } from 'graphql-relay'
 import { IResolvers } from '@graphql-tools/utils'
+import { ReactionType } from '@/entities/Reaction'
 
 export const resolvers: IResolvers<unknown, Context> = {
   Query: {
@@ -39,6 +40,19 @@ export const resolvers: IResolvers<unknown, Context> = {
       } else {
         return await context.postController.getComments(parent)
       }
+    },
+    comment_count: async (parent: Post, __, context) => {
+      return await context.postController.getCommentCounts(parent)
+    },
+    reaction_counts: async (parent: Post, __, context) => {
+      return await Promise.all(
+        Object.values(ReactionType).map(async (type) => {
+          return {
+            type: type,
+            count: context.reactionController.getReactionCounts(parent, type)
+          }
+        })
+      )
     }
   }
 }

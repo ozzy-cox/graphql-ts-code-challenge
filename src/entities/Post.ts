@@ -2,13 +2,15 @@ import { isInteger } from 'lodash-es'
 import { Node } from './Node'
 import { Base } from './Base'
 import { ListableRepository } from '@/interfaces/Repository'
-import { Reaction } from './Reaction'
+import { Reaction, ReactionType } from './Reaction'
 
 export interface Post extends Base, Node {
   post?: Post
   content: string
   get comments(): Post[]
   get reactions(): Reaction[]
+  get comment_count(): number
+  // TODO Consider reaction counts in this interface ?
 }
 
 export type IPostRepository = ListableRepository<Post>
@@ -38,5 +40,9 @@ export class PostController {
     if (offset === undefined || limit === undefined) throw new Error('Inputs must be defined')
 
     return this.postRepository.list(offset, limit)
+  }
+
+  getCommentCounts = (post: Post): Promise<number> => {
+    return this.postRepository.count({ post })
   }
 }
