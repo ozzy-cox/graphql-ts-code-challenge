@@ -22,6 +22,13 @@ type Post implements Node & Reactable & Commentable {
   comments(flat: Boolean = False): [Post!]!
   reactions: [Reaction!]!
   content: String!
+  comment_count: Int!
+  reaction_counts: [ReactionCount!]!
+}
+
+type ReactionCount{
+  type: ReactionType!
+  count: Int
 }
 
 enum ReactionType {
