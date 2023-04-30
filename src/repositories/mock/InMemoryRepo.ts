@@ -28,6 +28,14 @@ export class MockRepository<T> extends BaseMockRepo<T> implements Repository<T> 
       resolve(filteredEntities)
     })
   }
+
+  count(where: { [key: string]: unknown }): Promise<number> {
+    return new Promise((resolve, reject) => {
+      this.findBy(where).then((entities) => {
+        resolve(entities.length)
+      })
+    })
+  }
 }
 
 export class MockListableRepository<T> extends MockRepository<T> implements ListableRepository<T> {

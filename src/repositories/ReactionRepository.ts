@@ -18,4 +18,8 @@ export class ReactionRepository implements IReactionRepository {
   async findBy(where: { [key: string]: unknown }) {
     return this.repository.find(where)
   }
+
+  async count(where: { [key: string]: unknown }) {
+    return this.repository.count(where)
+  }
 }

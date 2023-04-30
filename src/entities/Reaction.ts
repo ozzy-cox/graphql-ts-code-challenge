@@ -26,4 +26,8 @@ export class ReactionController {
   createReaction = (type: ReactionType, post: Post): Promise<Reaction | undefined> => {
     return this.reactionRepository.add({ type, post })
   }
+
+  getReactionCounts = async (post: Post, type: ReactionType): Promise<number> => {
+    return this.reactionRepository.count({ post, type })
+  }
 }

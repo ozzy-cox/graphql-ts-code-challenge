@@ -9,10 +9,12 @@ import { EntityRepository } from '@mikro-orm/core'
 import config from '@/mikro-orm-test.config'
 import { PostRepository } from '@/repositories/PostRepository'
 import assert from 'assert'
-import { MockListableRepository } from '@/repositories/mock/InMemoryRepo'
+import { MockListableRepository, MockRepository } from '@/repositories/mock/InMemoryRepo'
 import { Post } from '@/lib/orm/models/Post'
 import { toGlobalId } from 'graphql-relay'
 import { Resolved } from '@/types'
+import { ReactionController, ReactionType } from '@/entities/Reaction'
+import { Reaction } from '@/lib/orm/models/Reaction'
 
 const orm = await getOrm(config)
 const em = orm.em.fork()
@@ -25,6 +27,7 @@ describe('listing comments', () => {
   let postRepository: EntityRepository<Post>
   // TODO add test with orm repo
   const postController = new PostController(new MockListableRepository<Post>())
+  const reactionController = new ReactionController(new MockRepository<Reaction>())
 
   beforeAll(async () => {
     testServer = new ApolloServer<Context>({
@@ -34,7 +37,7 @@ describe('listing comments', () => {
 
     orm = await getOrm(config)
     await wipeDb()
-    await initDBStateForTest(orm)
+    // await initDBStateForTest(orm)
 
     postRepository = orm.em.fork().getRepository(Post)
   })
@@ -77,7 +80,8 @@ describe('listing comments', () => {
       },
       {
         contextValue: {
-          postController
+          postController,
+          reactionController
         }
       }
     )
@@ -91,7 +95,6 @@ describe('listing comments', () => {
     const postResponse = (response.body.singleResult.data?.posts as Resolved<IPost>[])[0]
 
     const comments = postResponse.comments as unknown as Resolved<IPost>[]
-    // TODO extract comments from post
     expect(comments.map((post) => post.id).every((id) => commentIds.includes(id))).toBeTruthy()
   })
 })
