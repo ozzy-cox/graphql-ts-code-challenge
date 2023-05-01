@@ -1,5 +1,5 @@
 import { Post } from '@/entities/Post'
-import { Context } from '../context'
+import { Context } from './context'
 import { toGlobalId } from 'graphql-relay'
 import { ReactionType } from '@/entities/Reaction'
 

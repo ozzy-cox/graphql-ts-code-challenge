@@ -1,7 +1,7 @@
 import { PostController, Post as IPost } from '@/entities/Post'
 import { initDBStateForTest, wipeDb } from '@/initDBStateForTest'
 import { Context } from '@/lib/gql/context'
-import { resolvers } from '@/lib/gql/resolvers/post'
+import { resolvers } from '@/lib/gql/resolvers'
 import { typeDefs } from '@/lib/gql/typeDefs'
 import { getOrm } from '@/lib/orm/orm'
 import { ApolloServer } from '@apollo/server'

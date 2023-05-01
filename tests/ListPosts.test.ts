@@ -1,5 +1,5 @@
 import { Context, context } from '@/lib/gql/context'
-import { resolvers } from '@/lib/gql/resolvers/post'
+import { resolvers } from '@/lib/gql/resolvers'
 import { typeDefs } from '@/lib/gql/typeDefs'
 import { Post } from '@/lib/orm/models/Post'
 import { getOrm } from '@/lib/orm/orm'

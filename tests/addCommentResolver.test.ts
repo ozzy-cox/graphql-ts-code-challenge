@@ -1,4 +1,4 @@
-import { resolvers } from '@/lib/gql/resolvers/post'
+import { resolvers } from '@/lib/gql/resolvers'
 import { mockContext } from '../src/repositories/mock/mockContext'
 import { Post } from '@/entities/Post'
 import { Context } from '@/lib/gql/context'

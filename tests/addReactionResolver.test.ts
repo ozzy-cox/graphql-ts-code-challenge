@@ -1,10 +1,10 @@
 import { Reaction, ReactionType } from '@/entities/Reaction'
-import { resolvers } from '@/lib/gql/resolvers/post'
 import { mockContext } from '@/repositories/mock/mockContext'
 import { GraphQLResolveInfo } from 'graphql'
 import { IFieldResolver } from '@graphql-tools/utils'
 import { Context } from '@/lib/gql/context'
 import { Post } from '@/entities/Post'
+import { resolvers } from '@/lib/gql/resolvers'
 
 describe('adding reactions via resolver', () => {
   let context: Context
