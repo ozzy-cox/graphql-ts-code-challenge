@@ -1,14 +1,18 @@
-import { Context } from '@/lib/gql/context'
 import { resolvers } from '@/lib/gql/resolvers/post'
-import { IFieldResolver } from '@graphql-tools/utils'
-import { GraphQLResolveInfo } from 'graphql'
 import { mockContext } from '../src/repositories/mock/mockContext'
+import { Post } from '@/entities/Post'
+import { Context } from '@/lib/gql/context'
 
 describe('creating a comment using the resolver', () => {
-  test('should create a comment', async () => {
-    const context = mockContext()
-    const post = await context.postController.createPost('Post content')
+  let context: Context
+  let post: Post | undefined
 
+  beforeAll(async () => {
+    context = await mockContext()
+    post = await context.postController.createPost('Post content')
+  })
+
+  test('should create a comment', async () => {
     const args = {
       content: 'Always be trying something new.',
       postId: post && post.id

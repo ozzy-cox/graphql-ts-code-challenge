@@ -5,8 +5,12 @@ import { IFieldResolver } from '@graphql-tools/utils'
 import { GraphQLResolveInfo } from 'graphql'
 
 describe('creating a post using the resolver', () => {
+  let context: Context
+  beforeAll(async () => {
+    context = await mockContext()
+  })
+
   test('should create a post', async () => {
-    const context = await mockContext()
     const args = {
       content: 'Always be trying something new.'
     }

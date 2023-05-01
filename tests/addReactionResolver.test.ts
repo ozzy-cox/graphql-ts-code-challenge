@@ -4,11 +4,18 @@ import { mockContext } from '@/repositories/mock/mockContext'
 import { GraphQLResolveInfo } from 'graphql'
 import { IFieldResolver } from '@graphql-tools/utils'
 import { Context } from '@/lib/gql/context'
+import { Post } from '@/entities/Post'
 
 describe('adding reactions via resolver', () => {
+  let context: Context
+  let post: Post | undefined
+
+  beforeAll(async () => {
+    context = await mockContext()
+    post = await context.postController.createPost('Post content')
+  })
+
   test('should create a reaction on a post', async () => {
-    const context = mockContext()
-    const post = await context.postController.createPost('Post content')
     const args = {
       type: ReactionType.HEART,
       postId: post && post.id
