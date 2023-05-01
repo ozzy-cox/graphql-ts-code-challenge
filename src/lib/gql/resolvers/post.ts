@@ -4,7 +4,7 @@ import { toGlobalId } from 'graphql-relay'
 import { IResolvers } from '@graphql-tools/utils'
 import { ReactionType } from '@/entities/Reaction'
 
-export const resolvers: IResolvers<unknown, Context> = {
+export const resolvers: Record<string, IResolvers<unknown, Context>> = {
   Query: {
     posts: async (
       _,
@@ -53,6 +53,30 @@ export const resolvers: IResolvers<unknown, Context> = {
           }
         })
       )
+    }
+  },
+  Mutation: {
+    post: async (
+      _,
+      args: {
+        content: string
+        postId: number
+      },
+      context
+    ) => {
+      const post = await context.postController.getPostById(args.postId)
+      return await context.postController.createPost(args.content, post)
+    },
+    react: async (
+      _,
+      args: {
+        type: ReactionType
+        postId: number
+      },
+      context
+    ) => {
+      const post = await context.postController.getPostById(args.postId)
+      return await context.reactionController.createReaction(args.type, post)
     }
   }
 }
