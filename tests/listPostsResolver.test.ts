@@ -1,6 +1,5 @@
 import { Post } from '@/entities/Post'
 import { resolvers } from '@/lib/gql/resolvers'
-import { PostRepository } from '@/repositories/PostRepository'
 import { mockContext } from '@/repositories/mock/mockContext'
 import { every, range } from 'lodash-es'
 
