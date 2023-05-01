@@ -45,5 +45,5 @@ type Query {
 
 type Mutation {
   post(content: String!, postId: ID): Post
-  react(postId: ID!, type: ReactionType!): Post
+  react(type: ReactionType!, postId: ID!): Post
 }

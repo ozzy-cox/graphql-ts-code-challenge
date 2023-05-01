@@ -1,5 +1,5 @@
 import { ApolloServer } from '@apollo/server'
-import { resolvers } from './resolvers/post'
+import { resolvers } from './resolvers'
 import { startStandaloneServer } from '@apollo/server/standalone'
 import { typeDefs } from './typeDefs'
 import { context } from './context'

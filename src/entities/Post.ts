@@ -28,6 +28,10 @@ export class PostController {
     return this.postRepository.add({ content, post })
   }
 
+  getPostById = async (postId: number) => {
+    return (await this.postRepository.findBy({ id: postId }))[0]
+  }
+
   getComments = (post: Post): Promise<Post[]> => {
     return this.postRepository.findBy({ post })
   }
