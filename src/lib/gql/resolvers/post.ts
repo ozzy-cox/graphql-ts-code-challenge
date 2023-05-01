@@ -1,13 +1,12 @@
 import { Post } from '@/entities/Post'
 import { Context } from '../context'
 import { toGlobalId } from 'graphql-relay'
-import { IResolvers } from '@graphql-tools/utils'
 import { ReactionType } from '@/entities/Reaction'
 
-export const resolvers: Record<string, IResolvers<unknown, Context>> = {
+export const resolvers = {
   Query: {
     posts: async (
-      _,
+      _: unknown,
       args: {
         offset?: number
         limit?: number
@@ -21,7 +20,13 @@ export const resolvers: Record<string, IResolvers<unknown, Context>> = {
     id: (parent: Post) => {
       return toGlobalId('Post', parent.id)
     },
-    comments: async (parent: Post, args, context) => {
+    comments: async (
+      parent: Post,
+      args: {
+        flat?: boolean
+      },
+      context: Context
+    ) => {
       if (args?.flat) {
         const getAllComments = async (post: Post) => {
           const accumulator: Post[] = []
@@ -41,10 +46,10 @@ export const resolvers: Record<string, IResolvers<unknown, Context>> = {
         return await context.postController.getComments(parent)
       }
     },
-    comment_count: async (parent: Post, __, context) => {
+    comment_count: async (parent: Post, __: unknown, context: Context) => {
       return await context.postController.getCommentCounts(parent)
     },
-    reaction_counts: async (parent: Post, __, context) => {
+    reaction_counts: async (parent: Post, __: unknown, context: Context) => {
       return await Promise.all(
         Object.values(ReactionType).map(async (type) => {
           return {
@@ -57,23 +62,24 @@ export const resolvers: Record<string, IResolvers<unknown, Context>> = {
   },
   Mutation: {
     post: async (
-      _,
+      _: unknown,
       args: {
         content: string
-        postId: number
+        postId?: number
       },
-      context
+      context: Context
     ) => {
-      const post = await context.postController.getPostById(args.postId)
+      let post
+      if (args.postId) post = await context.postController.getPostById(args.postId)
       return await context.postController.createPost(args.content, post)
     },
     react: async (
-      _,
+      _: unknown,
       args: {
         type: ReactionType
         postId: number
       },
-      context
+      context: Context
     ) => {
       const post = await context.postController.getPostById(args.postId)
       return await context.reactionController.createReaction(args.type, post)

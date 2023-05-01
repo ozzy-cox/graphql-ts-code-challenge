@@ -14,15 +14,10 @@ describe('creating a comment using the resolver', () => {
       postId: post && post.id
     }
 
-    const comment = await (resolvers.Mutation.post as IFieldResolver<any, Context, any>)(
-      undefined,
-      args,
-      context,
-      undefined as unknown as GraphQLResolveInfo
-    )
+    const comment = await resolvers.Mutation.post(undefined, args, context)
 
-    expect(comment.id).toBeDefined()
-    expect(comment.content).toEqual(args.content)
-    expect(comment.post.id).toEqual(post && post.id)
+    expect(comment && comment.id).toBeDefined()
+    expect(comment && comment.content).toEqual(args.content)
+    expect(comment && comment.post && comment.post.id).toEqual(post && post.id)
   })
 })

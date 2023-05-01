@@ -11,14 +11,8 @@ describe('creating a post using the resolver', () => {
       content: 'Always be trying something new.'
     }
 
-    const post = await (resolvers.Mutation.post as IFieldResolver<any, Context, any>)(
-      undefined,
-      args,
-      context,
-      undefined as unknown as GraphQLResolveInfo
-    )
-
-    expect(post.id).toBeDefined()
-    expect(post.content).toEqual(args.content)
+    const post = await resolvers.Mutation.post(undefined, args, context)
+    expect(post && post.id).toBeDefined()
+    expect(post && post.content).toEqual(args.content)
   })
 })
