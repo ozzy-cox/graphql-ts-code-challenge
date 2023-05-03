@@ -40,7 +40,7 @@ enum ReactionType {
 
 type Query {
   node(id: ID!): Node
-  posts(offset: Int, limit: Int): [Post!]
+  posts(cursor: ID!, limit: Int): [Post!]
 }
 
 type Mutation {

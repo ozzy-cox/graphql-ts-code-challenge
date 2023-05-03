@@ -2,18 +2,21 @@ import { Post } from '@/entities/Post'
 import { Context } from './context'
 import { toGlobalId } from 'graphql-relay'
 import { ReactionType } from '@/entities/Reaction'
+import { fromGlobalId } from 'graphql-relay'
 
 export const resolvers = {
   Query: {
     posts: async (
       _: unknown,
       args: {
-        offset?: number
+        cursor: string
         limit?: number
       },
-      contextValue: Context
+      context: Context
     ) => {
-      return contextValue.postController.listPosts(args.offset, args.limit)
+      const { id } = fromGlobalId(args.cursor)
+      const postId = parseInt(id)
+      return context.postController.listPosts(postId, args.limit)
     }
   },
   Post: {
@@ -29,13 +32,13 @@ export const resolvers = {
     ) => {
       if (args?.flat) {
         const getAllComments = async (post: Post) => {
-          const accumulator: Post[] = []
+          const accumulator: (Post | Error)[] = []
           const comments = await context.postController.getComments(post)
           if (comments.length > 0) {
             accumulator.push(...comments)
             await Promise.all(
               comments.map(async (comment) => {
-                accumulator.push(...(await getAllComments(comment)))
+                if (!(comment instanceof Error)) accumulator.push(...(await getAllComments(comment)))
               })
             )
           }

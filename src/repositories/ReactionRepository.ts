@@ -22,4 +22,8 @@ export class ReactionRepository implements IReactionRepository {
   async count(where: { [key: string]: unknown }) {
     return this.repository.count(where)
   }
+
+  async findByPropertyIn(property: string, _in: readonly unknown[]) {
+    return this.repository.find({ [property]: { $in: _in } })
+  }
 }

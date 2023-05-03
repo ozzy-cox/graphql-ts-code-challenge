@@ -1,10 +1,8 @@
 import { getOrm } from '@/lib/orm/orm'
 import { PostRepository } from '@/repositories/PostRepository'
 import config from '@/mikro-orm-test.config'
-import { Post } from '@/lib/orm/models/Post'
 import { PostController } from '@/entities/Post'
 import DataLoader from 'dataloader'
-import { FilterQuery } from '@mikro-orm/core'
 
 describe('listing posts using dataloader', () => {
   let postRepository: PostRepository
@@ -43,7 +41,7 @@ describe('listing posts using dataloader', () => {
       })
     })
 
-    const postIds = post && (await postRepository.findByIdAndSelectIds(cursor, limit))
+    const postIds = post && (await postRepository.findByIdAndLimitIds(cursor, limit))
 
     const posts = postIds && (await postLoader.loadMany(postIds))
 

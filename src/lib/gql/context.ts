@@ -12,8 +12,9 @@ export type Context = {
 
 export const context = async () => {
   const orm = await getOrm(config)
-  const postController = new PostController(new PostRepository(orm.em.fork()))
-  const reactionController = new ReactionController(new ReactionRepository(orm.em.fork()))
+  const em = orm.em.fork()
+  const postController = new PostController(new PostRepository(em))
+  const reactionController = new ReactionController(new ReactionRepository(em))
   return {
     orm,
     postController,

@@ -13,6 +13,7 @@ import { MikroORM, IDatabaseDriver, Connection } from '@mikro-orm/core'
 import { Resolved } from '@/types'
 import { ReactionController, ReactionType } from '@/entities/Reaction'
 import { ReactionRepository } from '@/repositories/ReactionRepository'
+import { toGlobalId } from 'graphql-relay'
 
 describe('querying server', () => {
   let testServer: ApolloServer<Context>
@@ -38,7 +39,7 @@ describe('querying server', () => {
     {
       await postController.createPost('You too !', post1)
     }
-    await postController.createPost('Lorem ipsum')
+    const post2 = await postController.createPost('Lorem ipsum')
     const post3 = await postController.createPost('Coding is fun!')
     {
       await postController.createPost('random comment 1', post3)
@@ -47,10 +48,11 @@ describe('querying server', () => {
     await postController.createPost('I cant find original content')
 
     const limit = 3
-    const offset = 0
+    const cursor = post1 && toGlobalId('Post', post1.id)
+
     const query = `#graphql
-        query Posts($offset: Int, $limit: Int) {
-            posts(offset: $offset, limit: $limit) {
+        query Posts($cursor: ID!, $limit: Int) {
+            posts(cursor: $cursor, limit: $limit) {
                 id,
                 content,
                 createdAt,
@@ -62,11 +64,12 @@ describe('querying server', () => {
             }
         }
     `
+
     const response = await testServer.executeOperation(
       {
         query,
         variables: {
-          offset,
+          cursor,
           limit
         }
       },
