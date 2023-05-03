@@ -57,9 +57,11 @@ describe('listing comments', () => {
       toGlobalId('Post', comment?.id || '')
     )
 
+    const cursor = post && toGlobalId('Post', post.id)
+
     const query = `#graphql
-        query Posts($offset: Int, $limit: Int) {
-            posts(offset: $offset, limit: $limit) {
+        query Posts($cursor: ID!, $limit: Int) {
+            posts(cursor: $cursor, limit: $limit) {
                 id,
                 content,
                 createdAt,
@@ -74,7 +76,7 @@ describe('listing comments', () => {
       {
         query,
         variables: {
-          offset: 0,
+          cursor,
           limit: 1
         }
       },
@@ -89,7 +91,7 @@ describe('listing comments', () => {
     assert(response.body.kind === 'single')
     expect(response.body.singleResult.errors).toBeUndefined()
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
+    // @ts-ignore
     assert(response.body.singleResult.data?.posts !== undefined)
     expect((response.body.singleResult.data?.posts as Post[]).length).toEqual(1)
     const postResponse = (response.body.singleResult.data?.posts as Resolved<IPost>[])[0]

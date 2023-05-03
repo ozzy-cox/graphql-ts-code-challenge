@@ -46,14 +46,15 @@ export class PostController {
     return await this.postLoader.loadMany(commentIds)
   }
 
-  listPosts = (offset?: number, limit?: number): Promise<Post[]> => {
-    if (!isInteger(offset) || !isInteger(limit)) {
+  listPosts = async (cursor?: number, limit?: number) => {
+    if (!isInteger(cursor) || !isInteger(limit)) {
       throw new Error('Inputs must be integers')
     }
 
-    if (offset === undefined || limit === undefined) throw new Error('Inputs must be defined')
+    if (cursor === undefined || limit === undefined) throw new Error('Inputs must be defined')
 
-    return this.postRepository.list(offset, limit)
+    const postIds = await this.postRepository.findByIdAndLimitIds(cursor, limit)
+    return await this.postLoader.loadMany(postIds)
   }
 
   getCommentCounts = (post: Post): Promise<number> => {

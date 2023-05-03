@@ -28,7 +28,9 @@ export class PostRepository implements IPostRepository {
   }
 
   async findByIdAndLimitIds(id: number, limit: number) {
-    return (await this.repository.find({ id: { $gte: id } }, { fields: [], limit })).map((post) => post.id)
+    return (await this.repository.find({ id: { $gte: id }, post: undefined }, { fields: [], limit })).map(
+      (post) => post.id
+    )
   }
 
   async findByPropertyIn(property: string, _in: unknown[]) {

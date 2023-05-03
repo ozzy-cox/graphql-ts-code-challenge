@@ -65,7 +65,7 @@ export class MockListableRepository<T extends { id: number; createdAt: Date }>
       if (first) {
         const firstIndex = this.entities.indexOf(first)
         const ids = this.entities.slice(firstIndex, firstIndex + limit).map((entity) => entity.id)
-        return ids
+        resolve(ids)
       } else {
         reject('Error')
       }
