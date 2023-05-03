@@ -39,6 +39,15 @@ export class MockRepository<T extends { id: number; createdAt: Date }>
       })
     })
   }
+
+  findByPropertyIn(property: string, _in: unknown[]): Promise<T[]> {
+    return new Promise((resolve) => {
+      const filteredEntities = this.entities.filter((entity) => {
+        return _in.includes(get(entity, property))
+      })
+      resolve(filteredEntities)
+    })
+  }
 }
 export class MockListableRepository<T extends { id: number; createdAt: Date }>
   extends MockRepository<T>
@@ -50,9 +59,16 @@ export class MockListableRepository<T extends { id: number; createdAt: Date }>
     })
   }
 
-  findByIdAndSelectIds(id: number, limit: number): Promise<number[]> {
-    return new Promise((resolve) => {
-      // TODO Implement
+  findByIdAndLimitIds(id: number, limit: number): Promise<number[]> {
+    return new Promise((resolve, reject) => {
+      const first = this.entities.find((entity) => entity.id === id)
+      if (first) {
+        const firstIndex = this.entities.indexOf(first)
+        const ids = this.entities.slice(firstIndex, firstIndex + limit).map((entity) => entity.id)
+        return ids
+      } else {
+        reject('Error')
+      }
     })
   }
 }

@@ -2,7 +2,8 @@ import { isInteger } from 'lodash-es'
 import { Node } from './Node'
 import { Base } from './Base'
 import { ListableRepository } from '@/interfaces/Repository'
-import { Reaction, ReactionType } from './Reaction'
+import { Reaction } from './Reaction'
+import DataLoader from 'dataloader'
 
 export interface Post extends Base, Node {
   post?: Post
@@ -17,8 +18,16 @@ export type IPostRepository = ListableRepository<Post>
 
 export class PostController {
   postRepository: IPostRepository
+  postLoader: DataLoader<number, Post>
   constructor(postRepository: IPostRepository) {
     this.postRepository = postRepository
+
+    this.postLoader = new DataLoader<number, Post>(async (keys: readonly number[]) => {
+      const posts = await postRepository.findByPropertyIn('id', keys)
+      return keys.map((key) => {
+        return posts.find((post) => post.id === key) || new Error('asdf')
+      })
+    })
   }
 
   createPost = (content?: string, post?: Post): Promise<Post | undefined> => {
@@ -29,11 +38,12 @@ export class PostController {
   }
 
   getPostById = async (postId: number) => {
-    return (await this.postRepository.findBy({ id: postId }))[0]
+    return await this.postLoader.load(postId)
   }
 
-  getComments = (post: Post): Promise<Post[]> => {
-    return this.postRepository.findBy({ post })
+  getComments = async (post: Post) => {
+    const commentIds = (await this.postRepository.findByPropertyIn('post', [post])).map((post) => post.id)
+    return await this.postLoader.loadMany(commentIds)
   }
 
   listPosts = (offset?: number, limit?: number): Promise<Post[]> => {

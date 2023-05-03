@@ -1,20 +1,6 @@
-import { PostController, Post as IPost } from '@/entities/Post'
-import { initDBStateForTest, wipeDb } from '@/initDBStateForTest'
 import { Context } from '@/lib/gql/context'
 import { resolvers } from '@/lib/gql/resolvers'
-import { typeDefs } from '@/lib/gql/typeDefs'
-import { getOrm } from '@/lib/orm/orm'
-import { ApolloServer } from '@apollo/server'
-import { EntityRepository } from '@mikro-orm/core'
-import config from '@/mikro-orm-test.config'
-import { PostRepository } from '@/repositories/PostRepository'
-import assert from 'assert'
-import { MockListableRepository, MockRepository } from '@/repositories/mock/InMemoryRepo'
 import { Post } from '@/lib/orm/models/Post'
-import { toGlobalId } from 'graphql-relay'
-import { Resolved } from '@/types'
-import { ReactionController, ReactionType } from '@/entities/Reaction'
-import { Reaction } from '@/lib/orm/models/Reaction'
 import { mockContext } from '@/repositories/mock/mockContext'
 
 describe('listing posts using the resolver', () => {
@@ -46,6 +32,9 @@ describe('listing posts using the resolver', () => {
 
     const comments = post && (await resolvers.Post.comments(post, args, context))
 
-    expect(comments && comments.map((post) => post.id).every((id) => commentIds.includes(id))).toBeTruthy()
+    expect(
+      comments &&
+        comments.map((post) => !(post instanceof Error) && post.id).every((id) => id && commentIds.includes(id))
+    ).toBeTruthy()
   })
 })

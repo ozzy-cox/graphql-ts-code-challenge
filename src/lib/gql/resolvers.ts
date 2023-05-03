@@ -29,13 +29,13 @@ export const resolvers = {
     ) => {
       if (args?.flat) {
         const getAllComments = async (post: Post) => {
-          const accumulator: Post[] = []
+          const accumulator: (Post | Error)[] = []
           const comments = await context.postController.getComments(post)
           if (comments.length > 0) {
             accumulator.push(...comments)
             await Promise.all(
               comments.map(async (comment) => {
-                accumulator.push(...(await getAllComments(comment)))
+                if (!(comment instanceof Error)) accumulator.push(...(await getAllComments(comment)))
               })
             )
           }
