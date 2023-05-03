@@ -1,12 +1,15 @@
 import { every, filter, get, has } from 'lodash-es'
 import { Repository, ListableRepository } from '../../interfaces/Repository'
 
-class BaseMockRepo<T> {
+class BaseMockRepo<T extends { id: number }> {
   lastId = 1 // fake autoincrement id
   entities: T[] = []
 }
 
-export class MockRepository<T> extends BaseMockRepo<T> implements Repository<T> {
+export class MockRepository<T extends { id: number; createdAt: Date }>
+  extends BaseMockRepo<T>
+  implements Repository<T>
+{
   add(partialEntity: Omit<T, 'id' | 'createdAt'>): Promise<T> {
     return new Promise((resolve) => {
       const entity = {
@@ -37,11 +40,19 @@ export class MockRepository<T> extends BaseMockRepo<T> implements Repository<T> 
     })
   }
 }
-
-export class MockListableRepository<T> extends MockRepository<T> implements ListableRepository<T> {
+export class MockListableRepository<T extends { id: number; createdAt: Date }>
+  extends MockRepository<T>
+  implements ListableRepository<T>
+{
   list(offset: number, limit: number): Promise<T[]> {
     return new Promise((resolve) => {
       resolve(this.entities.slice(offset, offset + limit))
+    })
+  }
+
+  findByIdAndSelectIds(id: number, limit: number): Promise<number[]> {
+    return new Promise((resolve) => {
+      // TODO Implement
     })
   }
 }

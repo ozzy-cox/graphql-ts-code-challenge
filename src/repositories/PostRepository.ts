@@ -26,4 +26,8 @@ export class PostRepository implements IPostRepository {
   async count(where: { [key: string]: unknown }) {
     return this.repository.count(where)
   }
+
+  async findByIdAndSelectIds(id: number, limit: number) {
+    return (await this.repository.find({ id: { $gt: id } }, { fields: [], limit })).map((post) => post.id)
+  }
 }
