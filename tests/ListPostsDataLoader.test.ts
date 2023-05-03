@@ -3,6 +3,8 @@ import { PostRepository } from '@/repositories/PostRepository'
 import config from '@/mikro-orm-test.config'
 import { Post } from '@/lib/orm/models/Post'
 import { PostController } from '@/entities/Post'
+import DataLoader from 'dataloader'
+import { FilterQuery } from '@mikro-orm/core'
 
 describe('listing posts using dataloader', () => {
   let postRepository: PostRepository
@@ -31,8 +33,21 @@ describe('listing posts using dataloader', () => {
     await postController.createPost('Post content 11')
     await postController.createPost('Post content 12')
 
+    const postLoader = new DataLoader<number, unknown>(async (keys: readonly number[]) => {
+      const posts = await postRepository.findBy({
+        id: { $in: keys }
+      })
+
+      return keys.map((key) => {
+        return posts.find((post) => post.id === key) || undefined
+      })
+    })
+
     const postIds = post && (await postRepository.findByIdAndSelectIds(cursor, limit))
 
+    const posts = postIds && (await postLoader.loadMany(postIds))
+
     expect(postIds).toHaveLength(limit)
+    expect(posts).toHaveLength(limit)
   })
 })
