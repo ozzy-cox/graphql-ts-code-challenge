@@ -1,7 +1,7 @@
-import { Context } from '@/lib/gql/context'
-import { resolvers } from '@/lib/gql/resolvers'
-import { Post } from '@/lib/orm/models/Post'
-import { mockContext } from '@/repositories/mock/mockContext'
+import { Context } from '@/context'
+import { mockContext } from '@/mockContext'
+import { resolvers } from '@/post/infra/graphql/resolvers'
+import { Post } from '@/post/infra/orm/models/Post'
 
 describe('listing posts using the resolver', () => {
   let post: Post | undefined

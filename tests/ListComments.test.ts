@@ -1,20 +1,21 @@
-import { PostController, Post as IPost } from '@/entities/Post'
-import { initDBStateForTest, wipeDb } from '@/initDBStateForTest'
-import { Context } from '@/lib/gql/context'
-import { resolvers } from '@/lib/gql/resolvers'
-import { typeDefs } from '@/lib/gql/typeDefs'
-import { getOrm } from '@/lib/orm/orm'
 import { ApolloServer } from '@apollo/server'
 import { EntityRepository } from '@mikro-orm/core'
-import config from '@/mikro-orm-test.config'
-import { PostRepository } from '@/repositories/PostRepository'
 import assert from 'assert'
 import { MockListableRepository, MockRepository } from '@/repositories/mock/InMemoryRepo'
-import { Post } from '@/lib/orm/models/Post'
 import { toGlobalId } from 'graphql-relay'
 import { Resolved } from '@/types'
-import { ReactionController, ReactionType } from '@/entities/Reaction'
-import { Reaction } from '@/lib/orm/models/Reaction'
+import { getOrm } from '@/createOrm'
+import config from '@/shared/infra/orm/mikro-orm-test.config'
+import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
+import { Context } from '@/context'
+import { PostController } from '@/post/services/PostService'
+import { Post } from '@/post/infra/orm/models/Post'
+import { Reaction } from '@/reaction/infra/orm/models/Reaction'
+import { typeDefs } from '@/schema'
+import { resolvers } from '@/post/infra/graphql/resolvers'
+import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
+import { IPost } from '@/post/entities/IPost'
+import { ReactionController } from '@/reaction/services/ReactionService'
 
 const orm = await getOrm(config)
 const em = orm.em.fork()
@@ -37,7 +38,6 @@ describe('listing comments', () => {
 
     orm = await getOrm(config)
     await wipeDb()
-    // await initDBStateForTest(orm)
 
     postRepository = orm.em.fork().getRepository(Post)
   })
