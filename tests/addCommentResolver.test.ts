@@ -1,7 +1,7 @@
-import { resolvers } from '@/lib/gql/resolvers'
-import { mockContext } from '../src/repositories/mock/mockContext'
-import { Post } from '@/entities/Post'
-import { Context } from '@/lib/gql/context'
+import { Context } from '@/context'
+import { mockContext } from '@/mockContext'
+import { resolvers } from '@/post/infra/graphql/resolvers'
+import { Post } from '@/post/infra/orm/models/Post'
 
 describe('creating a comment using the resolver', () => {
   let context: Context

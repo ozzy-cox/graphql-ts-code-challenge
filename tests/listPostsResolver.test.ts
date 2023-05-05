@@ -1,11 +1,11 @@
-import { Post } from '@/entities/Post'
-import { resolvers } from '@/lib/gql/resolvers'
-import { mockContext } from '@/repositories/mock/mockContext'
 import { every, range } from 'lodash-es'
 import { toGlobalId } from 'graphql-relay'
+import { IPost } from '@/post/entities/IPost'
+import { mockContext } from '@/mockContext'
+import { resolvers } from '@/post/infra/graphql/resolvers'
 
 describe('listing posts using the resolver', () => {
-  const posts: Post[] = []
+  const posts: IPost[] = []
   const context = mockContext()
   beforeAll(async () => {
     await Promise.all(
@@ -24,7 +24,7 @@ describe('listing posts using the resolver', () => {
       limit
     }
 
-    const postsResponse = (await resolvers.Query.posts(undefined, args, context)) as Post[]
+    const postsResponse = (await resolvers.Query.posts(undefined, args, context)) as IPost[]
 
     expect(postsResponse.length).toEqual(limit)
     expect(

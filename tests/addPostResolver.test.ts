@@ -1,8 +1,6 @@
-import { Context } from '@/lib/gql/context'
-import { resolvers } from '@/lib/gql/resolvers'
-import { mockContext } from '@/repositories/mock/mockContext'
-import { IFieldResolver } from '@graphql-tools/utils'
-import { GraphQLResolveInfo } from 'graphql'
+import { Context } from '@/context'
+import { mockContext } from '@/mockContext'
+import { resolvers } from '@/post/infra/graphql/resolvers'
 
 describe('creating a post using the resolver', () => {
   let context: Context

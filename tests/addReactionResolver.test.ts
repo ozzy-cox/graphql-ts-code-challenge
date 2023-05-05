@@ -1,10 +1,10 @@
-import { Reaction, ReactionType } from '@/entities/Reaction'
-import { mockContext } from '@/repositories/mock/mockContext'
 import { GraphQLResolveInfo } from 'graphql'
 import { IFieldResolver } from '@graphql-tools/utils'
-import { Context } from '@/lib/gql/context'
-import { Post } from '@/entities/Post'
-import { resolvers } from '@/lib/gql/resolvers'
+import { Post } from '@/post/infra/orm/models/Post'
+import { mockContext } from '@/mockContext'
+import { IReaction, ReactionType } from '@/reaction/entities/IReaction'
+import { resolvers } from '@/post/infra/graphql/resolvers'
+import { Context } from '@/context'
 
 describe('adding reactions via resolver', () => {
   let context: Context
@@ -21,7 +21,7 @@ describe('adding reactions via resolver', () => {
       postId: post && post.id
     }
 
-    const reaction: Reaction = await (resolvers.Mutation.react as IFieldResolver<any, Context, any>)(
+    const reaction: IReaction = await (resolvers.Mutation.react as IFieldResolver<any, Context, any>)(
       undefined,
       args,
       context,

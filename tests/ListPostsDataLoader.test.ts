@@ -1,7 +1,7 @@
-import { getOrm } from '@/lib/orm/orm'
-import { PostRepository } from '@/repositories/PostRepository'
-import config from '@/mikro-orm-test.config'
-import { PostController } from '@/entities/Post'
+import { getOrm } from '@/createOrm'
+import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
+import { PostController } from '@/post/services/PostService'
+import config from '@/shared/infra/orm/mikro-orm-test.config'
 import DataLoader from 'dataloader'
 
 describe('listing posts using dataloader', () => {

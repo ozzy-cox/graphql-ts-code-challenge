@@ -1,3 +1,3 @@
-import { initServer } from './lib/gql/server'
+import { initServer } from './createServer'
 
 const server = initServer()

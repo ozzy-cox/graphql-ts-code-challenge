@@ -13,7 +13,8 @@ const jestConfig: JestConfigWithTsJest = {
         useESM: true
       }
     ]
-  }
+  },
+  testPathIgnorePatterns: ['/helpers.ts']
 }
 
 export default jestConfig
