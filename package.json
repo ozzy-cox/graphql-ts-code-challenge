@@ -10,12 +10,16 @@
     "test": "node --no-warnings --experimental-vm-modules  node_modules/jest/bin/jest.js --runInBand",
     "dev": "node --loader ts-paths-esm-loader --es-module-specifier-resolution=node src/index.ts",
     "tstest": "tsc --project tsconfig.build.json -d --noEmit",
-    "build": "tsc --project tsconfig.build.json -d"
+    "build": "tsc --project tsconfig.build.json -d",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@graphql-codegen/cli": "3.3.1",
+    "@graphql-codegen/typescript": "3.0.4",
+    "@graphql-codegen/typescript-resolvers": "3.2.1",
     "@graphql-tools/utils": "^9.2.1",
     "@mikro-orm/migrations": "^5.6.16",
     "@types/jest": "^29.5.0",
@@ -36,7 +40,8 @@
     "ts-paths-esm-loader": "^1.4.1",
     "tsconfig-paths": "^4.2.0",
     "tslib": "^2.5.0",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "@graphql-codegen/introspection": "3.0.1"
   },
   "dependencies": {
     "@apollo/server": "^4.6.0",
