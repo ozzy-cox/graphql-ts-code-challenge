@@ -3,7 +3,6 @@ import { EntityRepository } from '@mikro-orm/core'
 import assert from 'assert'
 import { MockListableRepository, MockRepository } from '@/repositories/mock/InMemoryRepo'
 import { toGlobalId } from 'graphql-relay'
-import { Resolved } from '@/types'
 import { getOrm } from '@/createOrm'
 import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
@@ -14,8 +13,8 @@ import { Reaction } from '@/reaction/infra/orm/models/Reaction'
 import { typeDefs } from '@/schema'
 import { resolvers } from '@/post/infra/graphql/resolvers'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
-import { IPost } from '@/post/entities/IPost'
 import { ReactionController } from '@/reaction/services/ReactionService'
+import { Post as ResolvedPost } from '@/generated/graphql'
 
 const orm = await getOrm(config)
 const em = orm.em.fork()
@@ -94,9 +93,9 @@ describe('listing comments', () => {
     // @ts-ignore
     assert(response.body.singleResult.data?.posts !== undefined)
     expect((response.body.singleResult.data?.posts as Post[]).length).toEqual(1)
-    const postResponse = (response.body.singleResult.data?.posts as Resolved<IPost>[])[0]
+    const postResponse = (response.body.singleResult.data?.posts as ResolvedPost[])[0]
 
-    const comments = postResponse.comments as unknown as Resolved<IPost>[]
+    const comments = postResponse.comments as unknown as ResolvedPost[]
     expect(comments.map((post) => post.id).every((id) => commentIds.includes(id))).toBeTruthy()
   })
 })

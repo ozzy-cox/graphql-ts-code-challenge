@@ -12,22 +12,10 @@ export class Post extends Base implements IPost {
   post?: Post
 
   @OneToMany(() => Post, (post) => post.post)
-  _comments? = new Collection<Post>(this)
+  comments? = new Collection<Post>(this)
 
   @OneToMany(() => Reaction, (reaction) => reaction.post)
-  _reactions? = new Collection<Reaction>(this)
-
-  get comments(): Post[] {
-    return this._comments ? this._comments.getItems() : []
-  }
-
-  get reactions(): Reaction[] {
-    return this._reactions ? this._reactions.getItems() : []
-  }
-
-  get comment_count(): number {
-    return this.comments.length
-  }
+  reactions? = new Collection<Reaction>(this)
 
   constructor(post: Omit<Post, 'id' | 'createdAt'>) {
     super()

@@ -1,6 +1,6 @@
 import { SqlEntityRepository } from '@mikro-orm/sqlite'
 import { Connection, EntityManager, IDatabaseDriver } from '@mikro-orm/core'
-import { IPostRepository } from '@/post/repositories/IPostRepository'
+import { IPostRepository, _IPostRepository } from '@/post/repositories/IPostRepository'
 import { Post } from '../models/Post'
 
 // TODO Make NOT generic
@@ -36,5 +36,18 @@ export class PostRepository implements IPostRepository {
 
   async findByPropertyIn(property: string, _in: unknown[]) {
     return await this.repository.find({ [property]: { $in: _in } })
+  }
+}
+
+export class _PostRepository implements _IPostRepository {
+  private repository: SqlEntityRepository<Post>
+  constructor(em: EntityManager<IDatabaseDriver<Connection>>) {
+    this.repository = em.getRepository(Post)
+  }
+
+  async create(post: Omit<Post, 'id' | 'createdAt'>) {
+    const postEntity = new Post(post)
+    await this.repository.persistAndFlush(postEntity)
+    return postEntity as Post
   }
 }

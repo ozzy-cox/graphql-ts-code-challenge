@@ -3,7 +3,7 @@ import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { wipeDb } from '../src/shared/infra/orm/initDBStateForTest'
 import assert from 'node:assert'
 import { MikroORM, IDatabaseDriver, Connection } from '@mikro-orm/core'
-import { Resolved } from '@/types'
+import { Post as ResolvedPost } from '@/generated/graphql'
 import { toGlobalId } from 'graphql-relay'
 import { Context, context } from '@/context'
 import { typeDefs } from '@/schema'
@@ -81,7 +81,7 @@ describe('querying server', () => {
 
     assert(response.body.kind === 'single')
     expect(response.body.singleResult.errors).toBeUndefined()
-    const responseData = response.body.singleResult.data?.posts as Resolved<Post>[]
+    const responseData = response.body.singleResult.data?.posts as ResolvedPost[]
     expect(responseData.map((post) => post.comment_count)).toEqual([1, 0, 2])
 
     expect((responseData[0] as any).reaction_counts).toEqual([

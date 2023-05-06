@@ -14,7 +14,7 @@ const em = orm.em.fork()
 const ormRepo = new PostRepository(em)
 
 describe('post operations', () => {
-  describe('on in memory repo', () => {
+  describe('on mock repo', () => {
     testCreatingPosts(new MockListableRepository<IPost>())
     testListingPosts(new MockListableRepository<IPost>())
     testCreatingComments(new MockListableRepository<IPost>())
@@ -27,6 +27,7 @@ describe('post operations', () => {
     })
 
     beforeEach(async () => {
+      // FIXME This actually does not work
       await wipeDb()
     })
 
