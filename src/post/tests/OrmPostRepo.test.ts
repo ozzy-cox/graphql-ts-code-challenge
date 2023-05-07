@@ -2,7 +2,7 @@ import { _PostRepository } from '../infra/orm/repositories/PostRepository'
 import { getOrm } from '@/createOrm'
 import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
-import { postRepoTest } from './RepoCreatingPosts.test.helpers'
+import { postRepoTest } from './RepoOperations.test.helpers'
 import { _IPostRepository } from '../repositories/IPostRepository'
 import { set } from 'lodash'
 
