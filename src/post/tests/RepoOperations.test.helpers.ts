@@ -1,12 +1,9 @@
 import assert from 'assert'
-import { _IPostRepository } from '../repositories/IPostRepository'
-import { intersection, range, unescape } from 'lodash-es'
-import { PostRepository } from '../infra/orm/repositories/PostRepository'
-import { Post } from '@/generated/graphql'
+import { IPostRepository } from '../repositories/IPostRepository'
+import { range } from 'lodash-es'
 import { IPost } from '../entities/IPost'
-import { PostController } from '../services/PostService'
 
-export const postRepoTest = (repoHook: () => () => _IPostRepository) => {
+export const postRepoTest = (repoHook: () => () => IPostRepository) => {
   const getRepo = repoHook()
   describe('using post repository', () => {
     test('should use repository to create a post', async () => {

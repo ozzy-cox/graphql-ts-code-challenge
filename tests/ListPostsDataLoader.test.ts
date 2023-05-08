@@ -1,21 +1,17 @@
 import { getOrm } from '@/createOrm'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
-import { PostController } from '@/post/services/PostService'
+import { PostService } from '@/post/services/PostService'
 import config from '@/shared/infra/orm/mikro-orm-test.config'
 import DataLoader from 'dataloader'
 
 describe('listing posts using dataloader', () => {
   let postRepository: PostRepository
 
-  beforeAll(async () => {
-    const em = (await getOrm(config)).em.fork()
-    postRepository = new PostRepository(em)
-  })
-
   test('should list ids for a pagination scheme', async () => {
-    const postController = new PostController(postRepository)
+    const em = (await getOrm(config)).em.fork()
+    const postRepository = new PostRepository(em)
+    const postController = new PostService(postRepository)
     const limit = 3
-    const cursor = 1 // TODO All pagination should be made with cursors
 
     const post = await postController.createPost('Post content 1')
 
@@ -32,16 +28,14 @@ describe('listing posts using dataloader', () => {
     await postController.createPost('Post content 12')
 
     const postLoader = new DataLoader<number, unknown>(async (keys: readonly number[]) => {
-      const posts = await postRepository.findBy({
-        id: { $in: keys }
-      })
+      const posts = await postRepository.findById(keys as Writeable<typeof keys>)
 
       return keys.map((key) => {
         return posts.find((post) => post.id === key) || undefined
       })
     })
 
-    const postIds = post && (await postRepository.findByIdAndLimitIds(cursor, limit))
+    const postIds = post && (await postRepository.findNextNPostIdsAfter(limit, post.id))
 
     const posts = postIds && (await postLoader.loadMany(postIds))
 

@@ -1,11 +1,10 @@
-import { MockListableRepository, MockRepository } from '@/repositories/mock/InMemoryRepo'
 import { Context } from './context'
-import { PostController } from './post/services/PostService'
-import { IPost } from './post/entities/IPost'
-import { IReaction } from './reaction/entities/IReaction'
-import { ReactionController } from './reaction/services/ReactionService'
+import { PostService } from './post/services/PostService'
+import { ReactionService } from './reaction/services/ReactionService'
+import { MockPostRepository } from './post/repositories/mock/MockPostRepository'
+import { MockReactionRepository } from './reaction/repositories/mock/MockReactionRepository'
 
 export const mockContext = (): Context => ({
-  postController: new PostController(new MockListableRepository<IPost>()),
-  reactionController: new ReactionController(new MockRepository<IReaction>())
+  postController: new PostService(new MockPostRepository()),
+  reactionController: new ReactionService(new MockReactionRepository())
 })

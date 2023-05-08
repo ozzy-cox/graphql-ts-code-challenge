@@ -3,14 +3,14 @@ import DataLoader from 'dataloader'
 import { IPost } from '@/post/entities/IPost'
 import { isInteger } from 'lodash-es'
 
-export class PostController {
+export class PostService {
   postRepository: IPostRepository
   postLoader: DataLoader<number, IPost>
+
   constructor(postRepository: IPostRepository) {
     this.postRepository = postRepository
-
     this.postLoader = new DataLoader<number, IPost>(async (keys: readonly number[]) => {
-      const posts = await postRepository.findByPropertyIn('id', keys)
+      const posts = await this.postRepository.findById(keys)
       return keys.map((key) => {
         return posts.find((post) => post.id === key) || new Error('asdf')
       })
@@ -21,7 +21,7 @@ export class PostController {
     if (!content) throw new Error('Content cannot be empty')
     if (content && content.length > 280) throw new Error('You cannot send a post which has more than 280 characters')
 
-    return this.postRepository.add({ content, post })
+    return this.postRepository.create({ content, post })
   }
 
   getPostById = async (postId: number) => {
@@ -29,22 +29,22 @@ export class PostController {
   }
 
   getComments = async (post: IPost) => {
-    const commentIds = (await this.postRepository.findByPropertyIn('post', [post])).map((post) => post.id)
+    const commentIds = (await this.postRepository.findByParentId(post.id)).map((post) => post.id)
     return await this.postLoader.loadMany(commentIds)
   }
 
-  listPosts = async (cursor?: number, limit?: number) => {
-    if (!isInteger(cursor) || !isInteger(limit)) {
+  listPosts = async (limit?: number, cursor?: IPost['id']) => {
+    if (!isInteger(limit)) {
       throw new Error('Inputs must be integers')
     }
 
-    if (cursor === undefined || limit === undefined) throw new Error('Inputs must be defined')
+    if (limit === undefined) throw new Error('Limit must be defined')
 
-    const postIds = await this.postRepository.findByIdAndLimitIds(cursor, limit)
+    const postIds = await this.postRepository.findNextNPostIdsAfter(limit, cursor)
     return await this.postLoader.loadMany(postIds)
   }
 
   getCommentCounts = (post: IPost): Promise<number> => {
-    return this.postRepository.count({ post })
+    return this.postRepository.countByParentId(post.id)
   }
 }

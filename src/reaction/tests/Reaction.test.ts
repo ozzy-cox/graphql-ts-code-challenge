@@ -1,12 +1,11 @@
-import { MockListableRepository, MockRepository } from '@/repositories/mock/InMemoryRepo'
 import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { testAddingReactions } from './AddingReactionts.test.helpers'
 import { getOrm } from '@/createOrm'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
 import { ReactionRepository } from '../infra/orm/repositories/ReactionRepository'
-import { IPost } from '@/post/entities/IPost'
-import { IReaction } from '../entities/IReaction'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
+import { MockPostRepository } from '@/post/repositories/mock/MockPostRepository'
+import { MockReactionRepository } from '../repositories/mock/MockReactionRepository'
 
 const orm = await getOrm(config)
 
@@ -16,7 +15,7 @@ const ormReactionRepository = new ReactionRepository(em)
 
 describe('adding reactions', () => {
   describe('on mock repo', () => {
-    testAddingReactions(new MockListableRepository<IPost>(), new MockRepository<IReaction>())
+    testAddingReactions(new MockPostRepository(), new MockReactionRepository())
   })
 
   describe('on orm repo', () => {

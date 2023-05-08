@@ -2,7 +2,7 @@ import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { MikroORM, IDatabaseDriver, Connection } from '@mikro-orm/core'
 import { PostRepository } from '../../../post/infra/orm/repositories/PostRepository'
 import { getOrm } from '@/createOrm'
-import { PostController } from '@/post/services/PostService'
+import { PostService } from '@/post/services/PostService'
 
 export const wipeDb = async () => {
   const orm = await getOrm(config)
@@ -11,7 +11,7 @@ export const wipeDb = async () => {
 }
 
 export const initDBStateForTest = async (orm: MikroORM<IDatabaseDriver<Connection>>) => {
-  const postController = new PostController(new PostRepository(orm.em.fork()))
+  const postController = new PostService(new PostRepository(orm.em.fork()))
 
   await postController.createPost('Have a nice day!')
   await postController.createPost('Lorem ipsum')

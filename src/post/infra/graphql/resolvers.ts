@@ -3,33 +3,30 @@ import { Context } from '../../../context'
 import { toGlobalId } from 'graphql-relay'
 import { ReactionType } from '@/reaction/entities/IReaction'
 import { fromGlobalId } from 'graphql-relay'
+import { Resolvers, Post, ResolverTypeWrapper, Maybe } from '@/generated/graphql'
 
-export const resolvers = {
+export const resolvers: Resolvers = {
   Query: {
-    posts: async (
-      _: unknown,
-      args: {
-        cursor: string
-        limit?: number
-      },
-      context: Context
-    ) => {
-      const { id } = fromGlobalId(args.cursor)
-      const postId = parseInt(id)
-      return context.postController.listPosts(postId, args.limit)
+    posts: async (_, args, context) => {
+      if (args.limit) {
+        if (args.cursor) {
+          const { id } = fromGlobalId(args.cursor)
+          return (await context.postController.listPosts(args.limit, id)).filter(
+            (res): res is IPost => !(res instanceof Error)
+          ) as ResolverTypeWrapper<Post>[]
+        } /* else {
+          return context.postController.listPosts(args.limit)
+        }
+ */
+      }
+      return []
     }
   },
   Post: {
-    id: (parent: IPost) => {
+    id: (parent) => {
       return toGlobalId('Post', parent.id)
     },
-    comments: async (
-      parent: IPost,
-      args: {
-        flat?: boolean
-      },
-      context: Context
-    ) => {
+    comments: async (parent, args, context) => {
       if (args?.flat) {
         const getAllComments = async (post: IPost) => {
           const accumulator: (IPost | Error)[] = []
