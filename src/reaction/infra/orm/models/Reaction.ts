@@ -12,7 +12,7 @@ export class Reaction extends Base implements IReaction {
   // This has to be IPost type in order to prevent circular dependency`
   post!: IPost
 
-  constructor(reaction: Omit<Reaction, 'id' | 'createdAt'>) {
+  constructor(reaction: Pick<Reaction, 'type' | 'post'>) {
     super()
     this.post = reaction.post
     this.type = reaction.type

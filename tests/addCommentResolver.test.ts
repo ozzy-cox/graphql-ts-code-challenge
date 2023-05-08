@@ -9,7 +9,7 @@ describe('creating a comment using the resolver', () => {
 
   beforeAll(async () => {
     context = await mockContext()
-    post = await context.postController.createPost('Post content')
+    post = await context.postService.createPost('Post content')
   })
 
   test('should create a comment', async () => {
@@ -18,7 +18,7 @@ describe('creating a comment using the resolver', () => {
       postId: post && post.id
     }
 
-    const comment = await resolvers.Mutation.post(undefined, args, context)
+    const comment = resolvers.Mutation?.post instanceof Function && (await resolvers.Mutation.post({}, args, context))
 
     expect(comment && comment.id).toBeDefined()
     expect(comment && comment.content).toEqual(args.content)

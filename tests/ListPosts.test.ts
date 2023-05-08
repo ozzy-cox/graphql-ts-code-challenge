@@ -13,12 +13,10 @@ import { PostService } from '@/post/services/PostService'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
 import { ReactionType } from '@/reaction/entities/IReaction'
 import { ReactionRepository } from '@/reaction/infra/orm/repositories/ReactionRepository'
-import { Post } from '@/post/infra/orm/models/Post'
 import { ReactionService } from '@/reaction/services/ReactionService'
 
 describe('querying server', () => {
   let testServer: ApolloServer<Context>
-  let orm: MikroORM<IDatabaseDriver<Connection>>
 
   beforeAll(async () => {
     testServer = new ApolloServer<Context>({
@@ -26,27 +24,25 @@ describe('querying server', () => {
       resolvers
     })
 
-    orm = await getOrm(config)
     await wipeDb()
   })
 
   test('list first three posts', async () => {
-    const postController = new PostService(new PostRepository(orm.em.fork()))
-    const reactionController = new ReactionService(new ReactionRepository(orm.em.fork()))
+    const { postService, reactionService } = await context()
 
-    const post1 = await postController.createPost('Have a nice day!')
+    const post1 = await postService.createPost('Have a nice day!')
     {
-      await postController.createPost('You too !', post1)
+      await postService.createPost('You too !', post1)
     }
-    const post2 = await postController.createPost('Lorem ipsum')
-    const reaction1 = post2 && (await reactionController.createReaction(ReactionType.THUMBSDOWN, post2))
-    const reaction2 = post2 && (await reactionController.createReaction(ReactionType.ROCKET, post2))
-    const post3 = await postController.createPost('Coding is fun!')
+    const post2 = await postService.createPost('Lorem ipsum')
+    const reaction1 = post2 && (await reactionService.createReaction(ReactionType.THUMBSDOWN, post2))
+    const reaction2 = post2 && (await reactionService.createReaction(ReactionType.ROCKET, post2))
+    const post3 = await postService.createPost('Coding is fun!')
     {
-      await postController.createPost('random comment 1', post3)
-      await postController.createPost('asdfasf', post3)
+      await postService.createPost('random comment 1', post3)
+      await postService.createPost('asdfasf', post3)
     }
-    await postController.createPost('I cant find original content')
+    await postService.createPost('I cant find original content')
 
     const limit = 3
     const cursor = post1 && toGlobalId('Post', post1.id)

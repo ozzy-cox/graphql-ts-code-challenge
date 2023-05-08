@@ -9,21 +9,21 @@ export const testAddingReactions = (postRepository: IPostRepository, reactionRep
   describe('adding reactions', () => {
     const postContent = "That's a lovely idea."
     const commentContent = "I don't think that is such a great idea."
-    const postController = new PostService(postRepository)
-    const reactionController = new ReactionService(reactionRepository)
+    const postService = new PostService(postRepository)
+    const reactionService = new ReactionService(reactionRepository)
 
     let post: IPost | undefined
 
     let comment: IPost | undefined
 
     beforeAll(async () => {
-      post = await postController.createPost(postContent)
-      comment = await postController.createPost(commentContent, post)
+      post = await postService.createPost(postContent)
+      comment = await postService.createPost(commentContent, post)
     })
 
     test('should add a reaction to a post', async () => {
       const type = ReactionType.THUMBSDOWN
-      const reaction = post && (await reactionController.createReaction(type, post))
+      const reaction = post && (await reactionService.createReaction(type, post))
 
       expect(reaction?.type).toEqual(type)
       expect(reaction?.post).toBe(post)
@@ -31,7 +31,7 @@ export const testAddingReactions = (postRepository: IPostRepository, reactionRep
 
     test('should add a reaction to a comment', async () => {
       const type = ReactionType.THUMBSUP
-      const reaction = comment && (await reactionController.createReaction(type, comment))
+      const reaction = comment && (await reactionService.createReaction(type, comment))
 
       expect(comment?.post).toBe(post)
       expect(reaction?.type).toEqual(type)

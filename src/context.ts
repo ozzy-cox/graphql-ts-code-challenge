@@ -6,18 +6,18 @@ import { getOrm } from './createOrm'
 import { ReactionService } from './reaction/services/ReactionService'
 
 export type Context = {
-  postController: PostService
-  reactionController: ReactionService
+  postService: PostService
+  reactionService: ReactionService
 }
 
 export const context = async () => {
   const orm = await getOrm(config)
   const em = orm.em.fork()
-  const postController = new PostService(new PostRepository(em))
-  const reactionController = new ReactionService(new ReactionRepository(em))
+  const postService = new PostService(new PostRepository(em))
+  const reactionService = new ReactionService(new ReactionRepository(em))
   return {
     orm,
-    postController,
-    reactionController
+    postService,
+    reactionService
   }
 }

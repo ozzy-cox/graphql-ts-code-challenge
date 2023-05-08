@@ -11,11 +11,11 @@ export const wipeDb = async () => {
 }
 
 export const initDBStateForTest = async (orm: MikroORM<IDatabaseDriver<Connection>>) => {
-  const postController = new PostService(new PostRepository(orm.em.fork()))
+  const postService = new PostService(new PostRepository(orm.em.fork()))
 
-  await postController.createPost('Have a nice day!')
-  await postController.createPost('Lorem ipsum')
-  await postController.createPost('Coding is fun!')
-  await postController.createPost("Can't wait for friday.")
-  await postController.createPost('I cant find original content')
+  await postService.createPost('Have a nice day!')
+  await postService.createPost('Lorem ipsum')
+  await postService.createPost('Coding is fun!')
+  await postService.createPost("Can't wait for friday.")
+  await postService.createPost('I cant find original content')
 }

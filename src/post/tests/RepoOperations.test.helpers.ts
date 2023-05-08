@@ -38,13 +38,13 @@ export const postRepoTest = (repoHook: () => () => IPostRepository) => {
       expect(foundPosts).toHaveLength(2)
       expect(foundPosts.every((post) => postIdsToFind.includes(post.id))).toBeTruthy()
 
-      postIdsToFind = [13, postIds[1]]
+      postIdsToFind = ['n234jfa', postIds[1]]
       foundPosts = await postRepository.findById(postIdsToFind)
       expect(foundPosts).toHaveLength(1)
       expect(foundPosts.every((post) => postIdsToFind.includes(post.id))).toBeTruthy()
       expect(postIdsToFind.every((id) => foundPosts.map((post) => post.id).includes(id))).toBeFalsy()
 
-      postIdsToFind = [12, 5312]
+      postIdsToFind = ['asdgasv234', '2143gsdaf']
       foundPosts = await postRepository.findById(postIdsToFind)
       expect(foundPosts).toHaveLength(0)
     })
@@ -109,7 +109,7 @@ export const postRepoTest = (repoHook: () => () => IPostRepository) => {
       const cursor = posts[first].id
       const limit = 5
 
-      const nextPostIds = await postRepository.findNextNPostIdsAfter(cursor, limit)
+      const nextPostIds = await postRepository.findNextNPostIdsAfter(limit, cursor)
       const expectedPostIds = posts.slice(first, first + limit).map((post) => post?.id)
 
       expect(nextPostIds.every((id, idx) => expectedPostIds[idx] === id))

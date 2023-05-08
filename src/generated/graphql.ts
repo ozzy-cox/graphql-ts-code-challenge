@@ -1,11 +1,15 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { Context } from '@/context';
+import type { ReactionType } from '@/reaction/entities/IReaction';
+import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import type { IPost } from '@/post/entities/IPost';
+import type { IReaction } from '@/reaction/entities/IReaction';
+import type { Context } from '@/context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+export type EnumResolverSignature<T, AllowedValues = any> = { [key in keyof T]?: AllowedValues };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -23,7 +27,7 @@ export type Commentable = {
 export type Mutation = {
   __typename?: 'Mutation';
   post?: Maybe<Post>;
-  react?: Maybe<Post>;
+  react?: Maybe<Reaction>;
 };
 
 
@@ -90,17 +94,12 @@ export type ReactionCount = {
   type: ReactionType;
 };
 
-export enum ReactionType {
-  Heart = 'HEART',
-  Rocket = 'ROCKET',
-  Thumbsdown = 'THUMBSDOWN',
-  Thumbsup = 'THUMBSUP'
-}
+export { ReactionType };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
-export type ResolverTypeWrapper<T> = Promise<T> | T;
+export type ResolverTypeWrapper<T> = T;
 
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
@@ -112,21 +111,21 @@ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info?: GraphQLResolveInfo
 ) => Promise<TResult> | TResult;
 
 export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info?: GraphQLResolveInfo
 ) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info?: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
 export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
@@ -150,10 +149,10 @@ export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TCo
 export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   parent: TParent,
   context: TContext,
-  info: GraphQLResolveInfo
+  info?: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info?: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -162,7 +161,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   parent: TParent,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo
+  info?: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
 
@@ -176,10 +175,10 @@ export type ResolversTypes = ResolversObject<{
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Node: ResolversTypes['Post'];
-  Post: ResolverTypeWrapper<Post>;
+  Post: ResolverTypeWrapper<IPost>;
   Query: ResolverTypeWrapper<{}>;
   Reactable: ResolversTypes['Post'];
-  Reaction: ResolverTypeWrapper<Reaction>;
+  Reaction: ResolverTypeWrapper<IReaction>;
   ReactionCount: ResolverTypeWrapper<ReactionCount>;
   ReactionType: ReactionType;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -194,10 +193,10 @@ export type ResolversParentTypes = ResolversObject<{
   Int: Scalars['Int'];
   Mutation: {};
   Node: ResolversParentTypes['Post'];
-  Post: Post;
+  Post: IPost;
   Query: {};
   Reactable: ResolversParentTypes['Post'];
-  Reaction: Reaction;
+  Reaction: IReaction;
   ReactionCount: ReactionCount;
   String: Scalars['String'];
 }>;
@@ -213,7 +212,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<MutationPostArgs, 'content'>>;
-  react?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<MutationReactArgs, 'postId' | 'type'>>;
+  react?: Resolver<Maybe<ResolversTypes['Reaction']>, ParentType, ContextType, RequireFields<MutationReactArgs, 'postId' | 'type'>>;
 }>;
 
 export type NodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{
@@ -253,6 +252,8 @@ export type ReactionCountResolvers<ContextType = Context, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ReactionTypeResolvers = EnumResolverSignature<{ HEART?: any, ROCKET?: any, THUMBSDOWN?: any, THUMBSUP?: any }, ResolversTypes['ReactionType']>;
+
 export type Resolvers<ContextType = Context> = ResolversObject<{
   Commentable?: CommentableResolvers<ContextType>;
   Date?: GraphQLScalarType;
@@ -263,5 +264,6 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   Reactable?: ReactableResolvers<ContextType>;
   Reaction?: ReactionResolvers<ContextType>;
   ReactionCount?: ReactionCountResolvers<ContextType>;
+  ReactionType?: ReactionTypeResolvers;
 }>;
 
