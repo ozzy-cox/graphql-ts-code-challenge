@@ -1,4 +1,7 @@
-import { Repository } from '@/interfaces/Repository'
-import { IReaction } from '../entities/IReaction'
+import { IPost } from '@/post/entities/IPost'
+import { IReaction, ReactionType } from '../entities/IReaction'
 
-export type IReactionRepository = Repository<IReaction>
+export interface IReactionRepository {
+  create(reaction: Partial<Omit<IReaction, 'id' | 'createdAt'>>): Promise<IReaction | undefined>
+  getCountsByType(postId: IPost['id'], type: ReactionType): Promise<number>
+}

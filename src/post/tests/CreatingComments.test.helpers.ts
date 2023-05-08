@@ -1,17 +1,21 @@
 import { IPost } from '../entities/IPost'
 import { IPostRepository } from '../repositories/IPostRepository'
-import { PostController } from '../services/PostService'
+import { PostService } from '../services/PostService'
 
-export const testCreatingComments = (postRepository: IPostRepository) => {
+export const testCreatingComments = (repoHook: () => () => IPostRepository) => {
+  const getRepo = repoHook()
   describe('creating comments', () => {
     let post: IPost | undefined
-    const postController = new PostController(postRepository)
 
     beforeEach(async () => {
+      const postRepository = getRepo()
+      const postController = new PostService(postRepository)
       post = await postController.createPost('Lorem ipsum dolor sit amet')
     })
 
     test('should create a comment on a post', async () => {
+      const postRepository = getRepo()
+      const postController = new PostService(postRepository)
       const commentContent = 'I fully agree with that statement'
 
       // There should be a post
@@ -25,8 +29,9 @@ export const testCreatingComments = (postRepository: IPostRepository) => {
     })
 
     test('should create a comment on a comment', async () => {
+      const postRepository = getRepo()
+      const postController = new PostService(postRepository)
       const commentContent = "That's a lovely idea."
-      const postController = new PostController(postRepository)
 
       const comment = post && (await postController.createPost(commentContent, post))
 

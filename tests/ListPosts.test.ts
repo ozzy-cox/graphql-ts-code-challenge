@@ -9,12 +9,12 @@ import { Context, context } from '@/context'
 import { typeDefs } from '@/schema'
 import { resolvers } from '@/post/infra/graphql/resolvers'
 import { getOrm } from '@/createOrm'
-import { PostController } from '@/post/services/PostService'
+import { PostService } from '@/post/services/PostService'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
 import { ReactionType } from '@/reaction/entities/IReaction'
 import { ReactionRepository } from '@/reaction/infra/orm/repositories/ReactionRepository'
 import { Post } from '@/post/infra/orm/models/Post'
-import { ReactionController } from '@/reaction/services/ReactionService'
+import { ReactionService } from '@/reaction/services/ReactionService'
 
 describe('querying server', () => {
   let testServer: ApolloServer<Context>
@@ -31,16 +31,16 @@ describe('querying server', () => {
   })
 
   test('list first three posts', async () => {
-    const postController = new PostController(new PostRepository(orm.em.fork()))
-    const reactionController = new ReactionController(new ReactionRepository(orm.em.fork()))
+    const postController = new PostService(new PostRepository(orm.em.fork()))
+    const reactionController = new ReactionService(new ReactionRepository(orm.em.fork()))
 
     const post1 = await postController.createPost('Have a nice day!')
-    const reaction1 = post1 && (await reactionController.createReaction(ReactionType.THUMBSDOWN, post1))
-    const reaction2 = post1 && (await reactionController.createReaction(ReactionType.ROCKET, post1))
     {
       await postController.createPost('You too !', post1)
     }
     const post2 = await postController.createPost('Lorem ipsum')
+    const reaction1 = post2 && (await reactionController.createReaction(ReactionType.THUMBSDOWN, post2))
+    const reaction2 = post2 && (await reactionController.createReaction(ReactionType.ROCKET, post2))
     const post3 = await postController.createPost('Coding is fun!')
     {
       await postController.createPost('random comment 1', post3)
@@ -82,9 +82,9 @@ describe('querying server', () => {
     assert(response.body.kind === 'single')
     expect(response.body.singleResult.errors).toBeUndefined()
     const responseData = response.body.singleResult.data?.posts as ResolvedPost[]
-    expect(responseData.map((post) => post.comment_count)).toEqual([1, 0, 2])
+    expect(responseData.map((post) => post.comment_count)).toEqual([0, 2, 0])
 
-    expect((responseData[0] as any).reaction_counts).toEqual([
+    expect(responseData[0].reaction_counts).toEqual([
       {
         type: ReactionType.THUMBSUP,
         count: 0

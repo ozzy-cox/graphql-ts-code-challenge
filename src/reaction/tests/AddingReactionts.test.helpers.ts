@@ -1,16 +1,16 @@
 import { IPostRepository } from '@/post/repositories/IPostRepository'
 import { IReactionRepository } from '../repositories/IReactionRepository'
-import { PostController } from '@/post/services/PostService'
+import { PostService } from '@/post/services/PostService'
 import { ReactionType } from '../entities/IReaction'
 import { IPost } from '@/post/entities/IPost'
-import { ReactionController } from '../services/ReactionService'
+import { ReactionService } from '../services/ReactionService'
 
 export const testAddingReactions = (postRepository: IPostRepository, reactionRepository: IReactionRepository) => {
   describe('adding reactions', () => {
     const postContent = "That's a lovely idea."
     const commentContent = "I don't think that is such a great idea."
-    const postController = new PostController(postRepository)
-    const reactionController = new ReactionController(reactionRepository)
+    const postController = new PostService(postRepository)
+    const reactionController = new ReactionService(reactionRepository)
 
     let post: IPost | undefined
 

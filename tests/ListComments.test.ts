@@ -1,34 +1,28 @@
 import { ApolloServer } from '@apollo/server'
 import { EntityRepository } from '@mikro-orm/core'
 import assert from 'assert'
-import { MockListableRepository, MockRepository } from '@/repositories/mock/InMemoryRepo'
 import { toGlobalId } from 'graphql-relay'
 import { getOrm } from '@/createOrm'
 import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
 import { Context } from '@/context'
-import { PostController } from '@/post/services/PostService'
 import { Post } from '@/post/infra/orm/models/Post'
-import { Reaction } from '@/reaction/infra/orm/models/Reaction'
 import { typeDefs } from '@/schema'
 import { resolvers } from '@/post/infra/graphql/resolvers'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
-import { ReactionController } from '@/reaction/services/ReactionService'
 import { Post as ResolvedPost } from '@/generated/graphql'
+import { mockContext } from '@/mockContext'
 
 const orm = await getOrm(config)
 const em = orm.em.fork()
 // TODO add test with orm repo
-const ormPostRepository = new PostRepository(em)
 
 describe('listing comments', () => {
   let testServer: ApolloServer<Context>
   let orm
   let postRepository: EntityRepository<Post>
   // TODO add test with orm repo
-  const postController = new PostController(new MockListableRepository<Post>())
-  const reactionController = new ReactionController(new MockRepository<Reaction>())
-
+  const { postController, reactionController } = mockContext()
   beforeAll(async () => {
     testServer = new ApolloServer<Context>({
       typeDefs,
