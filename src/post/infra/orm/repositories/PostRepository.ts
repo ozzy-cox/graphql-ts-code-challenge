@@ -9,7 +9,7 @@ export class PostRepository implements IPostRepository {
     this.repository = em.getRepository(Post)
   }
 
-  async create(post: Omit<Post, 'id' | 'createdAt'>) {
+  async create(post: Pick<Post, 'content' | 'post'>) {
     const postEntity = new Post(post)
     await this.repository.persistAndFlush(postEntity)
     return postEntity as Post
@@ -28,8 +28,8 @@ export class PostRepository implements IPostRepository {
     if (id) {
       const post = (await this.repository.find({ id }))[0]
       ids = await this.repository.find(
-        { id: { $gt: id }, post: undefined, createdAt: { $gte: post.createdAt } },
-        { fields: [], limit }
+        { post: undefined, createdAt: { $gt: post.createdAt } },
+        { fields: [], limit, orderBy: { createdAt: 'ASC' } }
       )
     } else {
       ids = await this.repository.find({ post: undefined }, { fields: [], limit, orderBy: { createdAt: 'ASC' } })
@@ -37,7 +37,7 @@ export class PostRepository implements IPostRepository {
 
     return ids.map((post) => post.id)
   }
-  async countByParentId(id: number) {
+  async countByParentId(id: Post['id']) {
     return this.repository.count({ post: { id: id } })
   }
 }

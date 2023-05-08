@@ -5,6 +5,6 @@ import { MockPostRepository } from './post/repositories/mock/MockPostRepository'
 import { MockReactionRepository } from './reaction/repositories/mock/MockReactionRepository'
 
 export const mockContext = (): Context => ({
-  postController: new PostService(new MockPostRepository()),
-  reactionController: new ReactionService(new MockReactionRepository())
+  postService: new PostService(new MockPostRepository()),
+  reactionService: new ReactionService(new MockReactionRepository())
 })

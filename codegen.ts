@@ -8,7 +8,17 @@ const config: CodegenConfig = {
       plugins: ['typescript', 'typescript-resolvers'],
       config: {
         contextType: '@/context#Context',
-        useIndexSignature: true
+        useIndexSignature: true,
+        enumValues: {
+          ReactionType: '@/reaction/entities/IReaction#ReactionType'
+        },
+        mappers: {
+          Post: '@/post/entities/IPost#IPost',
+          Reaction: '@/reaction/entities/IReaction#IReaction'
+        },
+        useTypeImports: true,
+        optionalInfoArgument: true,
+        resolverTypeWrapperSignature: 'T'
       }
     },
     './graphql.schema.json': {

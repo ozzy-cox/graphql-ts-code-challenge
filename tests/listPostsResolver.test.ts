@@ -3,6 +3,8 @@ import { toGlobalId } from 'graphql-relay'
 import { IPost } from '@/post/entities/IPost'
 import { mockContext } from '@/mockContext'
 import { resolvers } from '@/post/infra/graphql/resolvers'
+import { QueryPostsArgs } from '@/generated/graphql'
+import assert from 'assert'
 
 describe('listing posts using the resolver', () => {
   const posts: IPost[] = []
@@ -10,7 +12,7 @@ describe('listing posts using the resolver', () => {
   beforeAll(async () => {
     await Promise.all(
       range(10).map(async (idx: number) => {
-        const post = await context.postController.createPost(`Post content ${idx}`)
+        const post = await context.postService.createPost(`Post content ${idx}`)
         if (post) posts.push(post)
       })
     )
@@ -19,18 +21,20 @@ describe('listing posts using the resolver', () => {
   test('should list posts', async () => {
     const limit = 4
     const cursor = toGlobalId('Post', posts[2].id)
-    const args = {
+    const args: Partial<QueryPostsArgs> = {
       cursor,
       limit
     }
 
-    const postsResponse = (await resolvers.Query.posts(undefined, args, context)) as IPost[]
+    const postsResponse =
+      resolvers.Query?.posts instanceof Function && (await resolvers.Query?.posts({}, args, context))
 
+    assert(postsResponse)
     expect(postsResponse.length).toEqual(limit)
     expect(
       every(postsResponse, (post) => {
         return (
-          posts.find(({ id }: { id: number }) => {
+          posts.find(({ id }) => {
             return id === post?.id
           })?.content === post?.content
         )

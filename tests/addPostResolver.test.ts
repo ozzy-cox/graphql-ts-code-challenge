@@ -13,7 +13,7 @@ describe('creating a post using the resolver', () => {
       content: 'Always be trying something new.'
     }
 
-    const post = await resolvers.Mutation.post(undefined, args, context)
+    const post = resolvers.Mutation?.post instanceof Function && (await resolvers.Mutation.post({}, args, context))
     expect(post && post.id).toBeDefined()
     expect(post && post.content).toEqual(args.content)
   })

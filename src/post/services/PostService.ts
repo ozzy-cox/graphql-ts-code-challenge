@@ -2,15 +2,16 @@ import { IPostRepository } from '../repositories/IPostRepository'
 import DataLoader from 'dataloader'
 import { IPost } from '@/post/entities/IPost'
 import { isInteger } from 'lodash-es'
+import { filterOutErrors } from '@/shared/helpers/utils'
 
 export class PostService {
   postRepository: IPostRepository
-  postLoader: DataLoader<number, IPost>
+  postLoader: DataLoader<IPost['id'], IPost>
 
   constructor(postRepository: IPostRepository) {
     this.postRepository = postRepository
-    this.postLoader = new DataLoader<number, IPost>(async (keys: readonly number[]) => {
-      const posts = await this.postRepository.findById(keys)
+    this.postLoader = new DataLoader<IPost['id'], IPost>(async (keys) => {
+      const posts = await this.postRepository.findById(keys as Writeable<typeof keys>)
       return keys.map((key) => {
         return posts.find((post) => post.id === key) || new Error('asdf')
       })
@@ -24,13 +25,17 @@ export class PostService {
     return this.postRepository.create({ content, post })
   }
 
-  getPostById = async (postId: number) => {
+  getPostById = async (postId: IPost['id']) => {
     return await this.postLoader.load(postId)
   }
 
   getComments = async (post: IPost) => {
     const commentIds = (await this.postRepository.findByParentId(post.id)).map((post) => post.id)
-    return await this.postLoader.loadMany(commentIds)
+    return filterOutErrors(await this.postLoader.loadMany(commentIds))
+  }
+
+  getAllComments = async (post: IPost) => {
+    return filterOutErrors(await this.getAllCommentsRecursive(post))
   }
 
   listPosts = async (limit?: number, cursor?: IPost['id']) => {
@@ -41,10 +46,25 @@ export class PostService {
     if (limit === undefined) throw new Error('Limit must be defined')
 
     const postIds = await this.postRepository.findNextNPostIdsAfter(limit, cursor)
-    return await this.postLoader.loadMany(postIds)
+    const posts = await this.postLoader.loadMany(postIds)
+    return filterOutErrors(posts)
   }
 
   getCommentCounts = (post: IPost): Promise<number> => {
     return this.postRepository.countByParentId(post.id)
+  }
+
+  private getAllCommentsRecursive = async (post: IPost) => {
+    const accumulator: (IPost | Error)[] = []
+    const comments = await this.getComments(post)
+    if (comments.length > 0) {
+      accumulator.push(...comments)
+      await Promise.all(
+        comments.map(async (comment) => {
+          if (!(comment instanceof Error)) accumulator.push(...(await this.getAllCommentsRecursive(comment)))
+        })
+      )
+    }
+    return accumulator
   }
 }

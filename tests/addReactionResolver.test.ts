@@ -1,10 +1,10 @@
-import { GraphQLResolveInfo } from 'graphql'
-import { IFieldResolver } from '@graphql-tools/utils'
 import { Post } from '@/post/infra/orm/models/Post'
 import { mockContext } from '@/mockContext'
-import { IReaction, ReactionType } from '@/reaction/entities/IReaction'
+import { ReactionType } from '@/reaction/entities/IReaction'
 import { resolvers } from '@/post/infra/graphql/resolvers'
 import { Context } from '@/context'
+import { MutationReactArgs } from '@/generated/graphql'
+import assert from 'assert'
 
 describe('adding reactions via resolver', () => {
   let context: Context
@@ -12,24 +12,23 @@ describe('adding reactions via resolver', () => {
 
   beforeAll(async () => {
     context = await mockContext()
-    post = await context.postController.createPost('Post content')
   })
 
   test('should create a reaction on a post', async () => {
-    const args = {
+    post = await context.postService.createPost('Post content')
+    assert(post)
+    const args: MutationReactArgs = {
       type: ReactionType.HEART,
       postId: post && post.id
     }
 
-    const reaction: IReaction = await (resolvers.Mutation.react as IFieldResolver<any, Context, any>)(
-      undefined,
-      args,
-      context,
-      undefined as unknown as GraphQLResolveInfo
-    )
+    const reaction =
+      resolvers.Mutation?.react instanceof Function && (await resolvers.Mutation?.react?.({}, args, context))
+    assert(reaction)
 
+    assert(reaction)
     expect(reaction.post).toBe(post)
-    expect(post && (await context.reactionController.getReactionCounts(post, ReactionType.HEART))).toEqual(1)
-    expect(post && (await context.reactionController.getReactionCounts(post, ReactionType.THUMBSUP))).toEqual(0)
+    expect(post && (await context.reactionService.getReactionCounts(post, ReactionType.HEART))).toEqual(1)
+    expect(post && (await context.reactionService.getReactionCounts(post, ReactionType.THUMBSUP))).toEqual(0)
   })
 })

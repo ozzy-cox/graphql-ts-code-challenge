@@ -8,15 +8,14 @@ export class MockPostRepository extends BaseMockRepo<IPost> implements IPostRepo
     const createdAt = new Date()
     const createdPost = {
       ...post,
-      id: this.lastId,
+      id: this.generateId(),
       createdAt
     }
     this.entities.push(createdPost)
-    this.lastId += 1
     return createdPost
   }
 
-  async findById(ids: number[]) {
+  async findById(ids: IPost['id'][]) {
     return this.entities.filter((post) => ids.includes(post.id))
   }
 
@@ -38,7 +37,7 @@ export class MockPostRepository extends BaseMockRepo<IPost> implements IPostRepo
     }
   }
 
-  async countByParentId(id: number) {
+  async countByParentId(id: IPost['id']) {
     return this.entities.filter((post) => post.post?.id === id).length
   }
 }

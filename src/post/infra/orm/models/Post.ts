@@ -12,12 +12,22 @@ export class Post extends Base implements IPost {
   post?: Post
 
   @OneToMany(() => Post, (post) => post.post)
-  comments? = new Collection<Post>(this)
+  _comments? = new Collection<Post>(this)
 
   @OneToMany(() => Reaction, (reaction) => reaction.post)
-  reactions? = new Collection<Reaction>(this)
+  _reactions? = new Collection<Reaction>(this)
 
-  constructor(post: Omit<Post, 'id' | 'createdAt'>) {
+  @Property({ hidden: true })
+  get comments() {
+    return this._comments?.getItems() || []
+  }
+
+  @Property({ hidden: true })
+  get reactions() {
+    return this._reactions?.getItems() || []
+  }
+
+  constructor(post: Pick<Post, 'content' | 'post'>) {
     super()
     this.content = post.content
     this.post = post.post
