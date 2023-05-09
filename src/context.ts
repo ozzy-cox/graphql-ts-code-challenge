@@ -10,13 +10,12 @@ export type Context = {
   reactionService: ReactionService
 }
 
-export const context = async () => {
+export const context = async (): Promise<Context> => {
   const orm = await getOrm(config)
   const em = orm.em.fork()
   const postService = new PostService(new PostRepository(em))
   const reactionService = new ReactionService(new ReactionRepository(em))
   return {
-    orm,
     postService,
     reactionService
   }

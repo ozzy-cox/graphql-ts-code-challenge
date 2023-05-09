@@ -6,8 +6,6 @@ import config from '@/shared/infra/orm/mikro-orm-test.config'
 import DataLoader from 'dataloader'
 
 describe('listing posts using dataloader', () => {
-  let postRepository: PostRepository
-
   test('should list ids for a pagination scheme', async () => {
     const em = (await getOrm(config)).em.fork()
     const postRepository = new PostRepository(em)

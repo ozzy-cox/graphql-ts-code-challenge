@@ -5,11 +5,14 @@ import { mockContext } from '@/mockContext'
 import { resolvers } from '@/post/infra/graphql/resolvers'
 import { QueryPostsArgs } from '@/generated/graphql'
 import assert from 'assert'
+import { Context } from '@/context'
 
 describe('listing posts using the resolver', () => {
   const posts: IPost[] = []
-  const context = mockContext()
+
+  let context: Context
   beforeAll(async () => {
+    context = await mockContext()
     await Promise.all(
       range(10).map(async (idx: number) => {
         const post = await context.postService.createPost(`Post content ${idx}`)

@@ -25,6 +25,7 @@ export class PostRepository implements IPostRepository {
 
   async findNextNPostIdsAfter(limit: number, id?: Post['id']) {
     let ids = []
+    // TODO remove duplication
     if (id) {
       const post = (await this.repository.find({ id }))[0]
       ids = await this.repository.find(

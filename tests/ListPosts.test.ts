@@ -2,18 +2,13 @@ import { ApolloServer } from '@apollo/server'
 import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { wipeDb } from '../src/shared/infra/orm/initDBStateForTest'
 import assert from 'node:assert'
-import { MikroORM, IDatabaseDriver, Connection } from '@mikro-orm/core'
 import { Post as ResolvedPost } from '@/generated/graphql'
 import { toGlobalId } from 'graphql-relay'
 import { Context, context } from '@/context'
 import { typeDefs } from '@/schema'
 import { resolvers } from '@/post/infra/graphql/resolvers'
 import { getOrm } from '@/createOrm'
-import { PostService } from '@/post/services/PostService'
-import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
 import { ReactionType } from '@/reaction/entities/IReaction'
-import { ReactionRepository } from '@/reaction/infra/orm/repositories/ReactionRepository'
-import { ReactionService } from '@/reaction/services/ReactionService'
 
 describe('querying server', () => {
   let testServer: ApolloServer<Context>
@@ -35,8 +30,8 @@ describe('querying server', () => {
       await postService.createPost('You too !', post1)
     }
     const post2 = await postService.createPost('Lorem ipsum')
-    const reaction1 = post2 && (await reactionService.createReaction(ReactionType.THUMBSDOWN, post2))
-    const reaction2 = post2 && (await reactionService.createReaction(ReactionType.ROCKET, post2))
+    post2 && (await reactionService.createReaction(ReactionType.THUMBSDOWN, post2))
+    post2 && (await reactionService.createReaction(ReactionType.ROCKET, post2))
     const post3 = await postService.createPost('Coding is fun!')
     {
       await postService.createPost('random comment 1', post3)
