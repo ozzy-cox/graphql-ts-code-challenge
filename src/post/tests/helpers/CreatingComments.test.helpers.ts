@@ -1,6 +1,6 @@
-import { IPost } from '../entities/IPost'
-import { IPostRepository } from '../repositories/IPostRepository'
-import { PostService } from '../services/PostService'
+import { IPost } from '@/post/entities/IPost'
+import { IPostRepository } from '@/post/repositories/IPostRepository'
+import { PostService } from '@/post/services/PostService'
 
 export const testCreatingComments = (repoHook: () => () => IPostRepository) => {
   const getRepo = repoHook()

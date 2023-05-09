@@ -1,20 +1,19 @@
-import { testCreatingPosts } from './CreatingPosts.test.helpers'
-import { testListingPosts } from './ListingPosts.test.helpers'
-import { testCreatingComments } from './CreatingComments.test.helpers'
-import { MockPostRepository } from '../repositories/mock/MockPostRepository'
-import { repoHook } from './OrmRepoHook.test.helpers'
+import { testCreatingPosts } from './helpers/CreatingPosts.test.helpers'
+import { testListingPosts } from './helpers/ListingPosts.test.helpers'
+import { testCreatingComments } from './helpers/CreatingComments.test.helpers'
+import { ormRepoTestHook } from './helpers/OrmRepoHook.test.helpers'
+import { mockRepoTestHook } from './helpers/MockRepoHook.test.helpers'
 
-const mockRepoHook = () => () => new MockPostRepository()
 describe('post operations', () => {
   describe('on mock repo', () => {
-    testCreatingPosts(mockRepoHook)
-    testListingPosts(mockRepoHook)
-    testCreatingComments(mockRepoHook)
+    testCreatingPosts(mockRepoTestHook)
+    testListingPosts(mockRepoTestHook)
+    testCreatingComments(mockRepoTestHook)
   })
 
   describe('on orm repo', () => {
-    testCreatingPosts(repoHook)
-    testListingPosts(repoHook)
-    testCreatingComments(repoHook)
+    testCreatingPosts(ormRepoTestHook)
+    testListingPosts(ormRepoTestHook)
+    testCreatingComments(ormRepoTestHook)
   })
 })

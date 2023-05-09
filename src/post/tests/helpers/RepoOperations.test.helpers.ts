@@ -1,7 +1,7 @@
+import { IPost } from '@/post/entities/IPost'
+import { IPostRepository } from '@/post/repositories/IPostRepository'
 import assert from 'assert'
-import { IPostRepository } from '../repositories/IPostRepository'
 import { range } from 'lodash-es'
-import { IPost } from '../entities/IPost'
 
 export const postRepoTest = (repoHook: () => () => IPostRepository) => {
   const getRepo = repoHook()

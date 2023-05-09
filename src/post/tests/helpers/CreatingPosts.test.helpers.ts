@@ -1,5 +1,5 @@
-import { IPostRepository } from '../repositories/IPostRepository'
-import { PostService } from '../services/PostService'
+import { IPostRepository } from '../../repositories/IPostRepository'
+import { PostService } from '../../services/PostService'
 
 export const testCreatingPosts = (repoHook: () => () => IPostRepository) => {
   const getRepo = repoHook()

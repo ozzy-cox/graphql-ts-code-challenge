@@ -1,5 +1,5 @@
-import { IPostRepository } from '../repositories/IPostRepository'
-import { PostService } from '../services/PostService'
+import { IPostRepository } from '@/post/repositories/IPostRepository'
+import { PostService } from '@/post/services/PostService'
 
 export const testListingPosts = (repoHook: () => () => IPostRepository) => {
   describe('listing posts', () => {
