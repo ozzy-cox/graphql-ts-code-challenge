@@ -1,14 +1,14 @@
 import { ORM } from '@/orm'
 import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
-import { IPostRepository } from '@/post/repositories/IPostRepository'
-import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
+import { IReactionRepository } from '@/reaction/repositories/IReactionRepository'
+import { ReactionRepository } from '@/reaction/infra/orm/repositories/ReactionRepository'
 
 const orm = await ORM.getInstance()
 export const ormRepoTestHook = () => {
-  let postRepository: IPostRepository
+  let postRepository: IReactionRepository
   beforeAll(() => {
-    postRepository = new PostRepository(orm.em.fork())
+    postRepository = new ReactionRepository(orm.em.fork())
   })
 
   beforeEach(async () => {

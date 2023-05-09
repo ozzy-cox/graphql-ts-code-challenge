@@ -46,14 +46,19 @@ export const resolvers: Resolvers = {
   Mutation: {
     post: async (_, args, context) => {
       let post
-      if (args.postId) post = await context.postService.getPostById(args.postId)
-      return (await context.postService.createPost(args.content, post)) || null
+      if (args.postId) {
+        post = await context.postService.getPostById(args.postId)
+        if (post) return (await context.postService.createPost(args.content, post)) || null
+      }
+      return (await context.postService.createPost(args.content)) || null
     },
     react: async (_, args, context) => {
       const post = await context.postService.getPostById(args.postId)
-      const reaction = await context.reactionService.createReaction(args.type, post)
-      if (reaction) {
-        return reaction
+      if (post) {
+        const reaction = await context.reactionService.createReaction(args.type, post)
+        if (reaction) {
+          return reaction
+        }
       }
       return null
     }

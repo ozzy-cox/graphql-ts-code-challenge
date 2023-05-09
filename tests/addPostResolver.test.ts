@@ -1,6 +1,7 @@
 import { Context } from '@/context'
 import { mockContext } from '@/mockContext'
 import { resolvers } from '@/post/infra/graphql/resolvers'
+import assert from 'assert'
 
 describe('creating a post using the resolver', () => {
   let context: Context
@@ -14,7 +15,8 @@ describe('creating a post using the resolver', () => {
     }
 
     const post = resolvers.Mutation?.post instanceof Function && (await resolvers.Mutation.post({}, args, context))
-    expect(post && post.id).toBeDefined()
-    expect(post && post.content).toEqual(args.content)
+    assert(post)
+    expect(post.id).toBeDefined()
+    expect(post.content).toEqual(args.content)
   })
 })

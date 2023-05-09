@@ -11,7 +11,7 @@ import { mockContext } from '@/mockContext'
 describe('listing comments', () => {
   let testServer: ApolloServer<Context>
   let context: Context
-  // TODO add test with orm repo
+
   beforeAll(async () => {
     testServer = new ApolloServer<Context>({
       typeDefs,

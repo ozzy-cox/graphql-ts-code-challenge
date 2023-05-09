@@ -1,9 +1,9 @@
 import { IPostRepository } from '@/post/repositories/IPostRepository'
-import { IReactionRepository } from '../repositories/IReactionRepository'
+import { IReactionRepository } from '../../repositories/IReactionRepository'
 import { PostService } from '@/post/services/PostService'
-import { ReactionType } from '../entities/IReaction'
+import { ReactionType } from '../../entities/IReaction'
 import { IPost } from '@/post/entities/IPost'
-import { ReactionService } from '../services/ReactionService'
+import { ReactionService } from '../../services/ReactionService'
 
 export const testAddingReactions = (postRepository: IPostRepository, reactionRepository: IReactionRepository) => {
   describe('adding reactions', () => {

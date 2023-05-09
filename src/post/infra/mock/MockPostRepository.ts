@@ -1,5 +1,5 @@
-import { IPostRepository } from '../IPostRepository'
 import { IPost } from '@/post/entities/IPost'
+import { IPostRepository } from '@/post/repositories/IPostRepository'
 import { BaseMockRepo } from '@/shared/repositories/mock/BaseMock'
 import assert from 'assert'
 

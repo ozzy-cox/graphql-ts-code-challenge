@@ -1,13 +1,13 @@
 import config from '@/shared/infra/orm/mikro-orm-test.config'
-import { testAddingReactions } from './AddingReactionts.test.helpers'
-import { getOrm } from '@/createOrm'
+import { testAddingReactions } from './helpers/AddingReactionts.test.helpers'
+import { ORM } from '@/orm'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'
 import { ReactionRepository } from '../infra/orm/repositories/ReactionRepository'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
-import { MockPostRepository } from '@/post/repositories/mock/MockPostRepository'
-import { MockReactionRepository } from '../repositories/mock/MockReactionRepository'
+import { MockPostRepository } from '@/post/infra/mock/MockPostRepository'
+import { MockReactionRepository } from '../infra/mock/MockReactionRepository'
 
-const orm = await getOrm(config)
+const orm = await ORM.getInstance()
 
 const em = orm.em.fork()
 const ormPostRepository = new PostRepository(em)
@@ -33,7 +33,7 @@ describe('adding reactions', () => {
 
     afterAll(async () => {
       await wipeDb()
-      await (await getOrm(config)).close()
+      await (await ORM.getInstance()).close()
     })
   })
 })

@@ -12,14 +12,14 @@ describe('adding reactions via resolver', () => {
 
   beforeAll(async () => {
     context = await mockContext()
+    post = await context.postService.createPost('Post content')
   })
 
   test('should create a reaction on a post', async () => {
-    post = await context.postService.createPost('Post content')
     assert(post)
     const args: MutationReactArgs = {
       type: ReactionType.HEART,
-      postId: post && post.id
+      postId: post.id
     }
 
     const reaction =
@@ -28,7 +28,7 @@ describe('adding reactions via resolver', () => {
 
     assert(reaction)
     expect(reaction.post).toBe(post)
-    expect(post && (await context.reactionService.getReactionCounts(post, ReactionType.HEART))).toEqual(1)
-    expect(post && (await context.reactionService.getReactionCounts(post, ReactionType.THUMBSUP))).toEqual(0)
+    expect(await context.reactionService.getReactionCounts(post, ReactionType.HEART)).toEqual(1)
+    expect(await context.reactionService.getReactionCounts(post, ReactionType.THUMBSUP)).toEqual(0)
   })
 })

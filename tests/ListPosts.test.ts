@@ -1,5 +1,4 @@
 import { ApolloServer } from '@apollo/server'
-import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { wipeDb } from '../src/shared/infra/orm/initDBStateForTest'
 import assert from 'node:assert'
 import { Post as ResolvedPost } from '@/generated/graphql'
@@ -7,11 +6,12 @@ import { toGlobalId } from 'graphql-relay'
 import { Context, context } from '@/context'
 import { typeDefs } from '@/schema'
 import { resolvers } from '@/post/infra/graphql/resolvers'
-import { getOrm } from '@/createOrm'
 import { ReactionType } from '@/reaction/entities/IReaction'
+import { ORM } from '@/orm'
 
 describe('querying server', () => {
   let testServer: ApolloServer<Context>
+  let _context: Context
 
   beforeAll(async () => {
     testServer = new ApolloServer<Context>({
@@ -20,10 +20,11 @@ describe('querying server', () => {
     })
 
     await wipeDb()
+    _context = await context()
   })
 
   test('list first three posts', async () => {
-    const { postService, reactionService } = await context()
+    const { postService, reactionService } = _context
 
     const post1 = await postService.createPost('Have a nice day!')
     {
@@ -66,7 +67,7 @@ describe('querying server', () => {
         }
       },
       {
-        contextValue: await context()
+        contextValue: _context
       }
     )
 
@@ -97,7 +98,6 @@ describe('querying server', () => {
 
   afterAll(async () => {
     await wipeDb()
-    await (await getOrm(config)).close()
-    await testServer.stop()
+    await (await ORM.getInstance()).close()
   })
 })

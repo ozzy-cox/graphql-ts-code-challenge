@@ -1,7 +1,7 @@
 import { BaseMockRepo } from '@/shared/repositories/mock/BaseMock'
-import { IReactionRepository } from '../IReactionRepository'
 import { IReaction, ReactionType } from '@/reaction/entities/IReaction'
 import { IPost } from '@/post/entities/IPost'
+import { IReactionRepository } from '@/reaction/repositories/IReactionRepository'
 
 export class MockReactionRepository extends BaseMockRepo<IReaction> implements IReactionRepository {
   async create(reaction: Omit<IReaction, 'id' | 'createdAt'>) {

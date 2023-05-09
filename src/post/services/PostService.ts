@@ -6,7 +6,7 @@ import { filterOutErrors } from '@/shared/helpers/utils'
 
 export class PostService {
   postRepository: IPostRepository
-  postLoader: DataLoader<IPost['id'], IPost>
+  postLoader: DataLoader<IPost['id'], IPost | null>
 
   constructor(postRepository: IPostRepository) {
     this.postRepository = postRepository
@@ -54,16 +54,18 @@ export class PostService {
     return this.postRepository.countByParentId(post.id)
   }
 
-  private getAllCommentsRecursive = async (post: IPost) => {
-    const accumulator: (IPost | Error)[] = []
-    const comments = await this.getComments(post)
-    if (comments.length > 0) {
-      accumulator.push(...comments)
-      await Promise.all(
-        comments.map(async (comment) => {
-          if (!(comment instanceof Error)) accumulator.push(...(await this.getAllCommentsRecursive(comment)))
-        })
-      )
+  private getAllCommentsRecursive = async (post: IPost | null) => {
+    const accumulator: (IPost | null)[] = []
+    if (post) {
+      const comments = await this.getComments(post)
+      if (comments.length > 0) {
+        accumulator.push(...comments)
+        await Promise.all(
+          comments.map(async (comment) => {
+            if (!(comment instanceof Error)) accumulator.push(...(await this.getAllCommentsRecursive(comment)))
+          })
+        )
+      }
     }
     return accumulator
   }

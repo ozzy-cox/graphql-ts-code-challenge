@@ -1,9 +1,8 @@
-import { MikroORM } from '@mikro-orm/sqlite' // or any other driver package
-import config from '../src/shared/infra/orm/mikro-orm-test.config'
+import { ORM } from '@/orm'
 
 describe('using persistent mikroorm repo impl', () => {
   test('should initialize ORM instance', async () => {
-    const orm = await MikroORM.init(config)
+    const orm = await ORM.getInstance()
     expect(orm.em).not.toBeNull()
     await orm.close()
   })

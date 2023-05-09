@@ -1,15 +1,14 @@
-import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { MikroORM, IDatabaseDriver, Connection } from '@mikro-orm/core'
 import { PostRepository } from '../../../post/infra/orm/repositories/PostRepository'
-import { getOrm } from '@/createOrm'
+import { ORM } from '@/orm'
 import { PostService } from '@/post/services/PostService'
 
 export const wipeDb = async () => {
-  const orm = await getOrm(config)
+  const orm = await ORM.getInstance()
   await orm.getSchemaGenerator().refreshDatabase()
-  await orm.close()
 }
 
+// TODO Should be removed
 export const initDBStateForTest = async (orm: MikroORM<IDatabaseDriver<Connection>>) => {
   const postService = new PostService(new PostRepository(orm.em.fork()))
 

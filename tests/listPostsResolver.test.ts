@@ -9,8 +9,8 @@ import { Context } from '@/context'
 
 describe('listing posts using the resolver', () => {
   const posts: IPost[] = []
-
   let context: Context
+
   beforeAll(async () => {
     context = await mockContext()
     await Promise.all(
