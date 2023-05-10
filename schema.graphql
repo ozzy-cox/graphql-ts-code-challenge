@@ -4,23 +4,15 @@ interface Node {
   id: ID!
 }
 
-type Reaction {
-  type: ReactionType!
-}
-
-interface Reactable {
-  reactions: [Reaction]!
-}
-
 interface Commentable {
-  comments: [Post]!
+  comments: [Post!]!
+  comment_count: Int!
 }
 
-type Post implements Node & Reactable & Commentable {
+type Post implements Node & Commentable {
   id: ID!
   createdAt: Date!
-  comments(flat: Boolean = False): [Post]!
-  reactions: [Reaction!]!
+  comments(flat: Boolean = False): [Post!]!
   content: String!
   comment_count: Int!
   reaction_counts: [ReactionCount!]!
@@ -28,7 +20,7 @@ type Post implements Node & Reactable & Commentable {
 
 type ReactionCount{
   type: ReactionType!
-  count: Int
+  count: Int!
 }
 
 enum ReactionType {
@@ -45,5 +37,5 @@ type Query {
 
 type Mutation {
   post(content: String!, postId: ID): Post
-  react(type: ReactionType!, postId: ID!): Reaction
+  react(type: ReactionType!, postId: ID!): Post
 }

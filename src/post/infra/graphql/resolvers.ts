@@ -55,10 +55,8 @@ export const resolvers: Resolvers = {
     react: async (_, args, context) => {
       const post = await context.postService.getPostById(args.postId)
       if (post) {
-        const reaction = await context.reactionService.createReaction(args.type, post)
-        if (reaction) {
-          return reaction
-        }
+        await context.reactionService.createReaction(args.type, post)
+        return post
       }
       return null
     }

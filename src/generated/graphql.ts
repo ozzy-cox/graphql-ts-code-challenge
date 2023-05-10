@@ -21,13 +21,14 @@ export type Scalars = {
 };
 
 export type Commentable = {
-  comments: Array<Maybe<Post>>;
+  comment_count: Scalars['Int'];
+  comments: Array<Post>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   post?: Maybe<Post>;
-  react?: Maybe<Reaction>;
+  react?: Maybe<Post>;
 };
 
 
@@ -46,15 +47,14 @@ export type Node = {
   id: Scalars['ID'];
 };
 
-export type Post = Commentable & Node & Reactable & {
+export type Post = Commentable & Node & {
   __typename?: 'Post';
   comment_count: Scalars['Int'];
-  comments: Array<Maybe<Post>>;
+  comments: Array<Post>;
   content: Scalars['String'];
   createdAt: Scalars['Date'];
   id: Scalars['ID'];
   reaction_counts: Array<ReactionCount>;
-  reactions: Array<Reaction>;
 };
 
 
@@ -79,18 +79,9 @@ export type QueryPostsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
 };
 
-export type Reactable = {
-  reactions: Array<Maybe<Reaction>>;
-};
-
-export type Reaction = {
-  __typename?: 'Reaction';
-  type: ReactionType;
-};
-
 export type ReactionCount = {
   __typename?: 'ReactionCount';
-  count?: Maybe<Scalars['Int']>;
+  count: Scalars['Int'];
   type: ReactionType;
 };
 
@@ -177,8 +168,6 @@ export type ResolversTypes = ResolversObject<{
   Node: ResolversTypes['Post'];
   Post: ResolverTypeWrapper<IPost>;
   Query: ResolverTypeWrapper<{}>;
-  Reactable: ResolversTypes['Post'];
-  Reaction: ResolverTypeWrapper<IReaction>;
   ReactionCount: ResolverTypeWrapper<ReactionCount>;
   ReactionType: ReactionType;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -195,15 +184,14 @@ export type ResolversParentTypes = ResolversObject<{
   Node: ResolversParentTypes['Post'];
   Post: IPost;
   Query: {};
-  Reactable: ResolversParentTypes['Post'];
-  Reaction: IReaction;
   ReactionCount: ReactionCount;
   String: Scalars['String'];
 }>;
 
 export type CommentableResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Commentable'] = ResolversParentTypes['Commentable']> = ResolversObject<{
   __resolveType: TypeResolveFn<'Post', ParentType, ContextType>;
-  comments?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType>;
+  comment_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  comments?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -212,7 +200,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<MutationPostArgs, 'content'>>;
-  react?: Resolver<Maybe<ResolversTypes['Reaction']>, ParentType, ContextType, RequireFields<MutationReactArgs, 'postId' | 'type'>>;
+  react?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<MutationReactArgs, 'postId' | 'type'>>;
 }>;
 
 export type NodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{
@@ -222,12 +210,11 @@ export type NodeResolvers<ContextType = Context, ParentType extends ResolversPar
 
 export type PostResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = ResolversObject<{
   comment_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  comments?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType, Partial<PostCommentsArgs>>;
+  comments?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, Partial<PostCommentsArgs>>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   reaction_counts?: Resolver<Array<ResolversTypes['ReactionCount']>, ParentType, ContextType>;
-  reactions?: Resolver<Array<ResolversTypes['Reaction']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -236,18 +223,8 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   posts?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType, Partial<QueryPostsArgs>>;
 }>;
 
-export type ReactableResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Reactable'] = ResolversParentTypes['Reactable']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'Post', ParentType, ContextType>;
-  reactions?: Resolver<Array<Maybe<ResolversTypes['Reaction']>>, ParentType, ContextType>;
-}>;
-
-export type ReactionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Reaction'] = ResolversParentTypes['Reaction']> = ResolversObject<{
-  type?: Resolver<ResolversTypes['ReactionType'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type ReactionCountResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ReactionCount'] = ResolversParentTypes['ReactionCount']> = ResolversObject<{
-  count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ReactionType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -261,8 +238,6 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   Node?: NodeResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  Reactable?: ReactableResolvers<ContextType>;
-  Reaction?: ReactionResolvers<ContextType>;
   ReactionCount?: ReactionCountResolvers<ContextType>;
   ReactionType?: ReactionTypeResolvers;
 }>;

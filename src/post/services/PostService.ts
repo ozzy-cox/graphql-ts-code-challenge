@@ -2,7 +2,7 @@ import { IPostRepository } from '../repositories/IPostRepository'
 import DataLoader from 'dataloader'
 import { IPost } from '@/post/entities/IPost'
 import { isInteger } from 'lodash-es'
-import { filterOutErrors } from '@/shared/helpers/utils'
+import { filterOutErrors, filterTruthy } from '@/shared/helpers/utils'
 
 export class PostService {
   postRepository: IPostRepository
@@ -31,11 +31,11 @@ export class PostService {
 
   getComments = async (post: IPost) => {
     const commentIds = (await this.postRepository.findByParentId(post.id)).map((post) => post.id)
-    return filterOutErrors(await this.postLoader.loadMany(commentIds))
+    return filterTruthy(filterOutErrors(await this.postLoader.loadMany(commentIds)))
   }
 
   getAllComments = async (post: IPost) => {
-    return filterOutErrors(await this.getAllCommentsRecursive(post))
+    return filterTruthy(filterOutErrors(await this.getAllCommentsRecursive(post)))
   }
 
   listPosts = async (limit?: number, cursor?: IPost['id']) => {
@@ -47,7 +47,7 @@ export class PostService {
 
     const postIds = await this.postRepository.findNextNPostIdsAfter(limit, cursor)
     const posts = await this.postLoader.loadMany(postIds)
-    return filterOutErrors(posts)
+    return filterTruthy(filterOutErrors(posts))
   }
 
   getCommentCounts = (post: IPost): Promise<number> => {

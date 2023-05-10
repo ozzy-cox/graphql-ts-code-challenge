@@ -5,6 +5,7 @@ import { resolvers } from '@/post/infra/graphql/resolvers'
 import { Context } from '@/context'
 import { MutationReactArgs } from '@/generated/graphql'
 import assert from 'assert'
+import { networkInterfaces } from 'os'
 
 describe('adding reactions via resolver', () => {
   let context: Context
@@ -16,18 +17,21 @@ describe('adding reactions via resolver', () => {
   })
 
   test('should create a reaction on a post', async () => {
+    const reactionType = ReactionType.HEART
     assert(post)
     const args: MutationReactArgs = {
-      type: ReactionType.HEART,
+      type: reactionType,
       postId: post.id
     }
 
-    const reaction =
+    const reactionCounts = await context.reactionService.getReactionCounts(post, reactionType)
+    const postResponse =
       resolvers.Mutation?.react instanceof Function && (await resolvers.Mutation?.react?.({}, args, context))
-    assert(reaction)
+    assert(postResponse)
 
-    assert(reaction)
-    expect(reaction.post).toBe(post)
+    const nextReactionCounts = await context.reactionService.getReactionCounts(post, reactionType)
+
+    expect(reactionCounts).not.toEqual(nextReactionCounts)
     expect(await context.reactionService.getReactionCounts(post, ReactionType.HEART)).toEqual(1)
     expect(await context.reactionService.getReactionCounts(post, ReactionType.THUMBSUP)).toEqual(0)
   })
