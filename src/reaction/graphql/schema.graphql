@@ -1,0 +1,19 @@
+interface Reactable {
+  reaction_counts: [ReactionCount!]!
+}
+
+type ReactionCount {
+  type: ReactionType!
+  count: Int!
+}
+
+enum ReactionType {
+  THUMBSUP
+  THUMBSDOWN
+  ROCKET
+  HEART
+}
+
+type Mutation {
+  react(type: ReactionType!, postId: ID!): Post
+}

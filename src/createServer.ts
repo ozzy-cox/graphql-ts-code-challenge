@@ -1,7 +1,6 @@
 import { ApolloServer } from '@apollo/server'
-import { resolvers } from './post/infra/graphql/resolvers'
 import { startStandaloneServer } from '@apollo/server/standalone'
-import { typeDefs } from './schema'
+import { resolvers, typeDefs } from './schema'
 import { context } from './context'
 
 export const initServer = async () => {

@@ -1,7 +1,7 @@
 import { Context } from '@/context'
 import { mockContext } from '@/mockContext'
 import { IPost } from '@/post/entities/IPost'
-import { resolvers } from '@/post/infra/graphql/resolvers'
+import { resolvers } from '@/schema'
 import { Post } from '@/post/infra/orm/models/Post'
 import { filterOutErrors } from '@/shared/helpers/utils'
 import assert from 'assert'

@@ -4,7 +4,7 @@ import { toGlobalId } from 'graphql-relay'
 import { Context } from '@/context'
 import { Post } from '@/post/infra/orm/models/Post'
 import { typeDefs } from '@/schema'
-import { resolvers } from '@/post/infra/graphql/resolvers'
+import { resolvers } from '@/schema'
 import { Post as ResolvedPost } from '@/generated/graphql'
 import { mockContext } from '@/mockContext'
 

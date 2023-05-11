@@ -1,0 +1,9 @@
+scalar Date
+
+interface Node {
+  id: ID!
+}
+
+type Query {
+  node(id: ID!): Node
+}

@@ -1,7 +1,7 @@
 import { Post } from '@/post/infra/orm/models/Post'
 import { mockContext } from '@/mockContext'
 import { ReactionType } from '@/reaction/entities/IReaction'
-import { resolvers } from '@/post/infra/graphql/resolvers'
+import { resolvers } from '@/schema'
 import { Context } from '@/context'
 import { MutationReactArgs } from '@/generated/graphql'
 import assert from 'assert'

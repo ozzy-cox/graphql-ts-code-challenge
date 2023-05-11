@@ -1,7 +1,7 @@
 import { Context } from '@/context'
 import { mockContext } from '@/mockContext'
-import { resolvers } from '@/post/infra/graphql/resolvers'
 import { Post } from '@/post/infra/orm/models/Post'
+import { resolvers } from '@/schema'
 import assert from 'assert'
 
 describe('creating a comment using the resolver', () => {

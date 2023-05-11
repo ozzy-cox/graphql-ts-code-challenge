@@ -5,7 +5,7 @@ import { Post as ResolvedPost } from '@/generated/graphql'
 import { toGlobalId } from 'graphql-relay'
 import { Context, context } from '@/context'
 import { typeDefs } from '@/schema'
-import { resolvers } from '@/post/infra/graphql/resolvers'
+import { resolvers } from '@/schema'
 import { ReactionType } from '@/reaction/entities/IReaction'
 import { ORM } from '@/orm'
 
