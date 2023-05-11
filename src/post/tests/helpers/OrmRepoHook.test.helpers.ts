@@ -1,5 +1,4 @@
 import { ORM } from '@/orm'
-import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
 import { IPostRepository } from '@/post/repositories/IPostRepository'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'

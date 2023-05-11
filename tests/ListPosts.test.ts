@@ -46,6 +46,7 @@ describe('querying server', () => {
     const query = `#graphql
         query Posts($cursor: ID!, $limit: Int) {
             posts(cursor: $cursor, limit: $limit) {
+                __typename,
                 id,
                 content,
                 createdAt,
