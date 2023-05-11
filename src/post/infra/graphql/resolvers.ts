@@ -5,6 +5,13 @@ import { Resolvers } from '@/generated/graphql'
 
 export const resolvers: Resolvers = {
   Query: {
+    node: async (_, args, context) => {
+      const { type, id } = fromGlobalId(args.id)
+      if (type in context.serviceMap) {
+        return await context.serviceMap[type].findById(id)
+      }
+      return null
+    },
     posts: async (_, args, context) => {
       if (args.limit) {
         if (args.cursor) {
@@ -41,6 +48,11 @@ export const resolvers: Resolvers = {
           }
         })
       )
+    }
+  },
+  Node: {
+    __resolveType: (parent) => {
+      return parent.content ? 'Post' : null
     }
   },
   Mutation: {

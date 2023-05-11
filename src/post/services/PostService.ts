@@ -3,8 +3,9 @@ import DataLoader from 'dataloader'
 import { IPost } from '@/post/entities/IPost'
 import { isInteger } from 'lodash-es'
 import { filterOutErrors, filterTruthy } from '@/shared/helpers/utils'
+import { INodeService } from '@/shared/services/INodeService'
 
-export class PostService {
+export class PostService implements INodeService<IPost> {
   postRepository: IPostRepository
   postLoader: DataLoader<IPost['id'], IPost | null>
 
@@ -68,5 +69,9 @@ export class PostService {
       }
     }
     return accumulator
+  }
+
+  findById = async (id: string): Promise<IPost | null> => {
+    return await this.postLoader.load(id)
   }
 }

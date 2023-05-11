@@ -5,7 +5,6 @@ import { resolvers } from '@/post/infra/graphql/resolvers'
 import { Context } from '@/context'
 import { MutationReactArgs } from '@/generated/graphql'
 import assert from 'assert'
-import { networkInterfaces } from 'os'
 
 describe('adding reactions via resolver', () => {
   let context: Context

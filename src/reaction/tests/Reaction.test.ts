@@ -1,4 +1,3 @@
-import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { testAddingReactions } from './helpers/AddingReactionts.test.helpers'
 import { ORM } from '@/orm'
 import { PostRepository } from '@/post/infra/orm/repositories/PostRepository'

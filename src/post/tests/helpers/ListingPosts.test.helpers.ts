@@ -8,8 +8,7 @@ export const testListingPosts = (repoHook: () => () => IPostRepository) => {
       const postRepository = getRepo()
       const postService = new PostService(postRepository)
 
-      const post = await postService.createPost('Have a nice day')
-      const postId = post && post.id
+      await postService.createPost('Have a nice day')
       const posts = await postService.listPosts(5)
 
       expect(posts && posts.length).toEqual(1)

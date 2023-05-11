@@ -1,5 +1,4 @@
 import { ORM } from '@/orm'
-import config from '@/shared/infra/orm/mikro-orm-test.config'
 import { wipeDb } from '@/shared/infra/orm/initDBStateForTest'
 import { IReactionRepository } from '@/reaction/repositories/IReactionRepository'
 import { ReactionRepository } from '@/reaction/infra/orm/repositories/ReactionRepository'
