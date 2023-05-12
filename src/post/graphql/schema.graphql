@@ -1,12 +1,28 @@
+scalar CommentCursor
 interface Commentable {
   comments: [Post!]!
   comment_count: Int!
 }
 
+type CommentConnection {
+  pageInfo: PageInfo!
+  edges: [CommentEdge]
+}
+
+type CommentEdge {
+  node: Post
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  startCursor: String
+}
+
 type Post implements Node & Commentable & Reactable {
   id: ID!
   createdAt: Date!
-  comments(flat: Boolean = False): [Post!]!
+  comments(flat: Boolean = False, first: Int, after: ID): [Post!]!
   content: String!
   comment_count: Int!
   reaction_counts: [ReactionCount!]!
