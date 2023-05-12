@@ -8,6 +8,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 export type EnumResolverSignature<T, AllowedValues = any> = { [key in keyof T]?: AllowedValues };
 /** All built-in and custom scalars, mapped to their actual values */
@@ -17,12 +18,25 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
+  CommentCursor: string;
+  Date: string;
+};
+
+export type CommentConnection = {
+  __typename?: 'CommentConnection';
+  edges?: Maybe<Array<Maybe<CommentEdge>>>;
+  pageInfo: PageInfo;
+};
+
+export type CommentEdge = {
+  __typename?: 'CommentEdge';
+  cursor: Scalars['CommentCursor'];
+  node?: Maybe<Post>;
 };
 
 export type Commentable = {
   comment_count: Scalars['Int'];
-  comments: Array<Post>;
+  comments: Array<Maybe<Post>>;
 };
 
 export type Mutation = {
@@ -47,18 +61,26 @@ export type Node = {
   id: Scalars['ID'];
 };
 
-export type Post = Commentable & Node & {
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['CommentCursor']>;
+};
+
+export type Post = Commentable & Node & Reactable & {
   __typename?: 'Post';
   comment_count: Scalars['Int'];
-  comments: Array<Post>;
+  comments: Array<Maybe<Post>>;
   content: Scalars['String'];
   createdAt: Scalars['Date'];
   id: Scalars['ID'];
-  reaction_counts: Array<ReactionCount>;
+  reaction_counts: Array<Maybe<ReactionCount>>;
 };
 
 
 export type PostCommentsArgs = {
+  after?: InputMaybe<Scalars['CommentCursor']>;
+  first?: InputMaybe<Scalars['Int']>;
   flat?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -77,6 +99,10 @@ export type QueryNodeArgs = {
 export type QueryPostsArgs = {
   cursor?: InputMaybe<Scalars['ID']>;
   limit?: InputMaybe<Scalars['Int']>;
+};
+
+export type Reactable = {
+  reaction_counts: Array<Maybe<ReactionCount>>;
 };
 
 export type ReactionCount = {
@@ -160,14 +186,19 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CommentConnection: ResolverTypeWrapper<Omit<CommentConnection, 'edges'> & { edges?: Maybe<Array<Maybe<ResolversTypes['CommentEdge']>>> }>;
+  CommentCursor: ResolverTypeWrapper<Scalars['CommentCursor']>;
+  CommentEdge: ResolverTypeWrapper<Omit<CommentEdge, 'node'> & { node?: Maybe<ResolversTypes['Post']> }>;
   Commentable: ResolversTypes['Post'];
   Date: ResolverTypeWrapper<Scalars['Date']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Node: ResolversTypes['Post'];
+  PageInfo: ResolverTypeWrapper<PageInfo>;
   Post: ResolverTypeWrapper<IPost>;
   Query: ResolverTypeWrapper<{}>;
+  Reactable: ResolversTypes['Post'];
   ReactionCount: ResolverTypeWrapper<ReactionCount>;
   ReactionType: ReactionType;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -176,22 +207,43 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
+  CommentConnection: Omit<CommentConnection, 'edges'> & { edges?: Maybe<Array<Maybe<ResolversParentTypes['CommentEdge']>>> };
+  CommentCursor: Scalars['CommentCursor'];
+  CommentEdge: Omit<CommentEdge, 'node'> & { node?: Maybe<ResolversParentTypes['Post']> };
   Commentable: ResolversParentTypes['Post'];
   Date: Scalars['Date'];
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   Mutation: {};
   Node: ResolversParentTypes['Post'];
+  PageInfo: PageInfo;
   Post: IPost;
   Query: {};
+  Reactable: ResolversParentTypes['Post'];
   ReactionCount: ReactionCount;
   String: Scalars['String'];
+}>;
+
+export type CommentConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentConnection'] = ResolversParentTypes['CommentConnection']> = ResolversObject<{
+  edges?: Resolver<Maybe<Array<Maybe<ResolversTypes['CommentEdge']>>>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export interface CommentCursorScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['CommentCursor'], any> {
+  name: 'CommentCursor';
+}
+
+export type CommentEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentEdge'] = ResolversParentTypes['CommentEdge']> = ResolversObject<{
+  cursor?: Resolver<ResolversTypes['CommentCursor'], ParentType, ContextType>;
+  node?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type CommentableResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Commentable'] = ResolversParentTypes['Commentable']> = ResolversObject<{
   __resolveType: TypeResolveFn<'Post', ParentType, ContextType>;
   comment_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  comments?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
+  comments?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType>;
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -208,19 +260,30 @@ export type NodeResolvers<ContextType = Context, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
+export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  startCursor?: Resolver<Maybe<ResolversTypes['CommentCursor']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type PostResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = ResolversObject<{
   comment_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  comments?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, Partial<PostCommentsArgs>>;
+  comments?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType, Partial<PostCommentsArgs>>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  reaction_counts?: Resolver<Array<ResolversTypes['ReactionCount']>, ParentType, ContextType>;
+  reaction_counts?: Resolver<Array<Maybe<ResolversTypes['ReactionCount']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   node?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, 'id'>>;
   posts?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType, Partial<QueryPostsArgs>>;
+}>;
+
+export type ReactableResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Reactable'] = ResolversParentTypes['Reactable']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Post', ParentType, ContextType>;
+  reaction_counts?: Resolver<Array<Maybe<ResolversTypes['ReactionCount']>>, ParentType, ContextType>;
 }>;
 
 export type ReactionCountResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ReactionCount'] = ResolversParentTypes['ReactionCount']> = ResolversObject<{
@@ -232,12 +295,17 @@ export type ReactionCountResolvers<ContextType = Context, ParentType extends Res
 export type ReactionTypeResolvers = EnumResolverSignature<{ HEART?: any, ROCKET?: any, THUMBSDOWN?: any, THUMBSUP?: any }, ResolversTypes['ReactionType']>;
 
 export type Resolvers<ContextType = Context> = ResolversObject<{
+  CommentConnection?: CommentConnectionResolvers<ContextType>;
+  CommentCursor?: GraphQLScalarType;
+  CommentEdge?: CommentEdgeResolvers<ContextType>;
   Commentable?: CommentableResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Node?: NodeResolvers<ContextType>;
+  PageInfo?: PageInfoResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Reactable?: ReactableResolvers<ContextType>;
   ReactionCount?: ReactionCountResolvers<ContextType>;
   ReactionType?: ReactionTypeResolvers;
 }>;
