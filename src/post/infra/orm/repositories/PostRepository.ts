@@ -23,17 +23,44 @@ export class PostRepository implements IPostRepository {
     return this.repository.find({ post: { id: id } })
   }
 
-  async findNextNPostIdsAfter(limit: number, id?: Post['id']) {
+  async findNextPagePostIds({
+    parentId,
+    first,
+    after
+  }: {
+    parentId?: Post['id']
+    first?: number
+    after?: Post['id']
+  }): Promise<Post['id'][]> {
+    let ids = []
+    // TODO remove duplication
+    if (after) {
+      const post = (await this.repository.find({ id: after }))[0]
+      ids = await this.repository.find(
+        { post: { id: parentId }, createdAt: { $gt: post.createdAt } },
+        { fields: [], limit: first, orderBy: { createdAt: 'ASC' } }
+      )
+    } else {
+      ids = await this.repository.find(
+        { post: { id: parentId } },
+        { fields: [], limit: first, orderBy: { createdAt: 'ASC' } }
+      )
+    }
+
+    return ids.map((post) => post.id)
+  }
+
+  async findNextPostIdsAfter(first: number, id?: Post['id']) {
     let ids = []
     // TODO remove duplication
     if (id) {
       const post = (await this.repository.find({ id }))[0]
       ids = await this.repository.find(
         { post: undefined, createdAt: { $gt: post.createdAt } },
-        { fields: [], limit, orderBy: { createdAt: 'ASC' } }
+        { fields: [], limit: first, orderBy: { createdAt: 'ASC' } }
       )
     } else {
-      ids = await this.repository.find({ post: undefined }, { fields: [], limit, orderBy: { createdAt: 'ASC' } })
+      ids = await this.repository.find({ post: undefined }, { fields: [], limit: first, orderBy: { createdAt: 'ASC' } })
     }
 
     return ids.map((post) => post.id)

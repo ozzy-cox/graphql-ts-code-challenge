@@ -37,16 +37,24 @@ describe('listing comments', () => {
       toGlobalId('Post', comment?.id || '')
     )
 
-    const cursor = post && toGlobalId('Post', post.id)
+    const after = post && toGlobalId('Post', post.id)
 
     const query = `#graphql
-        query Posts($cursor: ID!, $limit: Int) {
-            posts(cursor: $cursor, limit: $limit) {
+        query Posts($after: ID!, $first: Int) {
+            posts(after: $after, first: $first) {
                 id,
                 content,
                 createdAt,
-                comments(flat: true){
-                    id
+                commentsConnection(flat: true){
+                    commentCount
+                    edges{
+                      node{
+                        id
+                      }
+                    }
+                    pageInfo{
+                      hasNextPage
+                    }
                 }
             }
         }
@@ -56,8 +64,8 @@ describe('listing comments', () => {
       {
         query,
         variables: {
-          cursor,
-          limit: 1
+          after,
+          first: 1
         }
       },
       {
@@ -67,13 +75,11 @@ describe('listing comments', () => {
 
     assert(response.body.kind === 'single')
     expect(response.body.singleResult.errors).toBeUndefined()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     assert(response.body.singleResult.data?.posts !== undefined)
     expect((response.body.singleResult.data?.posts as Post[]).length).toEqual(1)
     const postResponse = (response.body.singleResult.data?.posts as ResolvedPost[])[0]
 
-    const comments = postResponse.comments as unknown as ResolvedPost[]
+    const comments = postResponse.commentsConnection?.edges?.map((edge) => edge?.node) as unknown as ResolvedPost[]
     expect(comments.map((post) => post.id).every((id) => commentIds.includes(id))).toBeTruthy()
   })
 })

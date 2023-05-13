@@ -42,6 +42,17 @@ describe('server compliance with relay spec', () => {
           fields: [
             // May contain other items
             {
+              name: 'commentCount',
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: {
+                  kind: 'SCALAR',
+                  name: 'Int'
+                }
+              }
+            },
+            {
               name: 'pageInfo',
               type: {
                 name: null,
@@ -130,7 +141,7 @@ describe('server compliance with relay spec', () => {
                 name: null,
                 kind: 'NON_NULL',
                 ofType: {
-                  name: 'String',
+                  name: 'PostCursor',
                   kind: 'SCALAR'
                 }
               }
@@ -192,9 +203,9 @@ describe('server compliance with relay spec', () => {
               }
             },
             {
-              name: 'startCursor',
+              name: 'endCursor',
               type: {
-                name: 'String',
+                name: 'PostCursor',
                 kind: 'SCALAR',
                 ofType: null
               }

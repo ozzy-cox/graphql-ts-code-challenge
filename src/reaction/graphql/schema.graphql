@@ -1,5 +1,5 @@
 interface Reactable {
-  reaction_counts: [ReactionCount]!
+  reactionCounts: [ReactionCount]!
 }
 
 type ReactionCount {

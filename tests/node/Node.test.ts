@@ -25,7 +25,7 @@ describe('querying the server for a node', () => {
 
   test('should query for a node that is a post', async () => {
     const query = `#graphql
-        query getNode($id: ID!) {
+        query Node($id: ID!) {
             node(id: $id) {
                 __typename,
                 id,

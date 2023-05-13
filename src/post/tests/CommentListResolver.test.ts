@@ -38,11 +38,12 @@ describe('listing posts using the resolver', () => {
 
     assert(post)
     const comments =
-      resolvers.Post?.comments instanceof Function && (await resolvers.Post.comments(post, args, context))
+      resolvers.Post?.commentsConnection instanceof Function &&
+      (await resolvers.Post.commentsConnection(post, args, context))?.edges?.map((edge) => edge?.node)
 
     assert(comments)
     expect(
-      comments.map((post) => !(post instanceof Error) && post && post.id).every((id) => id && commentIds.includes(id))
+      comments.map((post) => !(post instanceof Error) && post && post?.id).every((id) => id && commentIds.includes(id))
     ).toBeTruthy()
   })
 })

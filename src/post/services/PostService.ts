@@ -4,6 +4,7 @@ import { IPost } from '@/post/entities/IPost'
 import { isInteger } from 'lodash-es'
 import { filterOutErrors, filterTruthy } from '@/shared/helpers/utils'
 import { INodeService } from '@/shared/services/INodeService'
+import { Writeable } from '@/types'
 
 export class PostService implements INodeService<IPost> {
   postRepository: IPostRepository
@@ -30,35 +31,35 @@ export class PostService implements INodeService<IPost> {
     return await this.postLoader.load(postId)
   }
 
-  getComments = async (post: IPost) => {
-    const commentIds = (await this.postRepository.findByParentId(post.id)).map((post) => post.id)
-    return filterTruthy(filterOutErrors(await this.postLoader.loadMany(commentIds)))
+  getPosts = async ({ parentId, first, after }: { parentId?: IPost['id']; first?: number; after?: IPost['id'] }) => {
+    const postIds = await this.postRepository.findNextPagePostIds({ parentId, first, after })
+    return filterTruthy(filterOutErrors(await this.postLoader.loadMany(postIds)))
   }
 
   getAllComments = async (post: IPost) => {
     return filterTruthy(filterOutErrors(await this.getAllCommentsRecursive(post)))
   }
 
-  listPosts = async (limit?: number, cursor?: IPost['id']) => {
-    if (!isInteger(limit)) {
+  listPosts = async (first?: number, after?: IPost['id']) => {
+    if (!isInteger(first)) {
       throw new Error('Inputs must be integers')
     }
 
-    if (limit === undefined) throw new Error('Limit must be defined')
+    if (first === undefined) throw new Error('Limit must be defined')
 
-    const postIds = await this.postRepository.findNextNPostIdsAfter(limit, cursor)
+    const postIds = await this.postRepository.findNextPostIdsAfter(first, after)
     const posts = await this.postLoader.loadMany(postIds)
     return filterTruthy(filterOutErrors(posts))
   }
 
-  getCommentCounts = (post: IPost): Promise<number> => {
-    return this.postRepository.countByParentId(post.id)
+  getCommentCount = (parentId: IPost['id']): Promise<number> => {
+    return this.postRepository.countByParentId(parentId)
   }
 
   private getAllCommentsRecursive = async (post: IPost | null) => {
     const accumulator: (IPost | null)[] = []
     if (post) {
-      const comments = await this.getComments(post)
+      const comments = await this.getPosts({ parentId: post.id })
       if (comments.length > 0) {
         accumulator.push(...comments)
         await Promise.all(

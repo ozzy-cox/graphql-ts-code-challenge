@@ -7,6 +7,5 @@ export interface IPost extends IBase, INode {
   content: string
   comments: IPost[]
   reactions: IReaction[]
-  // readonly comment_count?: unknown
   // TODO Consider reaction counts in this interface ?
 }

@@ -20,7 +20,7 @@ const config: CodegenConfig = {
         optionalInfoArgument: true,
         resolverTypeWrapperSignature: 'T',
         scalars: {
-          CommentCursor: 'string',
+          PostCursor: 'string',
           Date: 'string'
         }
       }

@@ -22,18 +22,18 @@ describe('listing posts using the resolver', () => {
   })
 
   test('should list posts', async () => {
-    const limit = 4
-    const cursor = toGlobalId('Post', posts[2].id)
+    const first = 4
+    const after = toGlobalId('Post', posts[2].id)
     const args: Partial<QueryPostsArgs> = {
-      cursor,
-      limit
+      first,
+      after
     }
 
     const postsResponse =
       resolvers.Query?.posts instanceof Function && (await resolvers.Query?.posts({}, args, context))
 
     assert(postsResponse)
-    expect(postsResponse.length).toEqual(limit)
+    expect(postsResponse.length).toEqual(first)
     expect(
       every(postsResponse, (post) => {
         return (

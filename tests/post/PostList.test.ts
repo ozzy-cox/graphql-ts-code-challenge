@@ -1,5 +1,5 @@
 import { ApolloServer } from '@apollo/server'
-import { wipeDb } from '../src/shared/infra/orm/initDBStateForTest'
+import { wipeDb } from '../../src/shared/infra/orm/initDBStateForTest'
 import assert from 'node:assert'
 import { Post as ResolvedPost } from '@/generated/graphql'
 import { toGlobalId } from 'graphql-relay'
@@ -40,18 +40,20 @@ describe('querying server', () => {
     }
     await postService.createPost('I cant find original content')
 
-    const limit = 3
-    const cursor = post1 && toGlobalId('Post', post1.id)
+    const first = 3
+    const after = post1 && toGlobalId('Post', post1.id)
 
     const query = `#graphql
-        query Posts($cursor: ID!, $limit: Int) {
-            posts(cursor: $cursor, limit: $limit) {
+        query Posts($first: Int, $after: ID!, $commentsFirst: Int) {
+            posts(first: $first, after: $after) {
                 __typename,
                 id,
                 content,
                 createdAt,
-                comment_count,
-                reaction_counts{
+                commentsConnection(first: $commentsFirst){
+                  commentCount
+                }
+                reactionCounts{
                   type,
                   count
                 }
@@ -63,8 +65,9 @@ describe('querying server', () => {
       {
         query,
         variables: {
-          cursor,
-          limit
+          first,
+          after,
+          commentsFirst: 3
         }
       },
       {
@@ -75,9 +78,10 @@ describe('querying server', () => {
     assert(response.body.kind === 'single')
     expect(response.body.singleResult.errors).toBeUndefined()
     const responseData = response.body.singleResult.data?.posts as ResolvedPost[]
-    expect(responseData.map((post) => post.comment_count)).toEqual([0, 2, 0])
+    expect(responseData.map((post) => post.commentsConnection?.commentCount)).toEqual([0, 2, 0])
+    // TODO compare comments response with comment objects
 
-    expect(responseData[0].reaction_counts).toEqual([
+    expect(responseData[0].reactionCounts).toEqual([
       {
         type: ReactionType.THUMBSUP,
         count: 0

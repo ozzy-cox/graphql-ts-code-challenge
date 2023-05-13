@@ -3,6 +3,7 @@ import { mockContext } from '@/mockContext'
 import { Post } from '@/post/infra/orm/models/Post'
 import { resolvers } from '@/schema'
 import assert from 'assert'
+import { toGlobalId } from 'graphql-relay'
 
 describe('creating a comment using the resolver', () => {
   let context: Context
@@ -17,7 +18,7 @@ describe('creating a comment using the resolver', () => {
     assert(post)
     const args = {
       content: 'Always be trying something new.',
-      postId: post.id
+      postId: toGlobalId('Post', post.id)
     }
 
     const comment = resolvers.Mutation?.post instanceof Function && (await resolvers.Mutation.post({}, args, context))

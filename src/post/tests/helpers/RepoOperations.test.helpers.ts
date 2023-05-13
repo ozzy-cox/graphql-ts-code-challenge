@@ -101,16 +101,66 @@ export const postRepoTest = (repoHook: () => () => IPostRepository) => {
     })
 
     test('should find next N item ids given a cursor', async () => {
+      // TODO This test mauy be depreacted if repo function is depreacted
       const postRepository = getRepo()
       const posts = await Promise.all(range(25).map((idx) => postRepository.create({ content: `Post content ${idx}` })))
 
-      const first = 7
-      assert(posts[first])
-      const cursor = posts[first].id
-      const limit = 5
+      const offset = 7
+      assert(posts[offset])
+      const after = posts[offset].id
+      const first = 5
 
-      const nextPostIds = await postRepository.findNextNPostIdsAfter(limit, cursor)
-      const expectedPostIds = posts.slice(first, first + limit).map((post) => post?.id)
+      const nextPostIds = await postRepository.findNextPostIdsAfter(first, after)
+      const expectedPostIds = posts.slice(offset, offset + first).map((post) => post?.id)
+
+      expect(nextPostIds.every((id, idx) => expectedPostIds[idx] === id))
+    })
+
+    test('should find next page of post ids', async () => {
+      const postRepository = getRepo()
+      const posts = await Promise.all(range(25).map((idx) => postRepository.create({ content: `Post content ${idx}` })))
+
+      const offset = 7
+      assert(posts[offset])
+      const after = posts[offset].id
+      const first = 5
+
+      const nextPostIds = await postRepository.findNextPagePostIds({
+        first,
+        after
+      })
+      let expectedPostIds = posts.slice(offset, offset + first).map((post) => post?.id)
+
+      expect(nextPostIds.every((id, idx) => expectedPostIds[idx] === id))
+
+      const firstPageIds = await postRepository.findNextPagePostIds({
+        first
+      })
+
+      expectedPostIds = posts.slice(0, first).map((post) => post?.id)
+
+      expect(firstPageIds.every((id, idx) => expectedPostIds[idx] === id))
+    })
+
+    test('should find next page of comment ids', async () => {
+      const postRepository = getRepo()
+      const post = await postRepository.create({ content: 'Post content 1' })
+
+      const comments = await Promise.all(
+        range(25).map((idx) => postRepository.create({ content: `Comment content ${idx}`, post }))
+      )
+
+      const offset = 7
+      assert(comments[offset])
+      const after = comments[offset].id
+      const first = 5
+
+      const nextPostIds = await postRepository.findNextPagePostIds({
+        parentId: post?.id,
+        after,
+        first
+      })
+      const expectedPostIds = comments.slice(offset, offset + first).map((comment) => comment?.id)
 
       expect(nextPostIds.every((id, idx) => expectedPostIds[idx] === id))
     })
