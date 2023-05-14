@@ -49,7 +49,6 @@ export const resolvers: Resolvers = {
       }
     },
     reactionCounts: async (parent, __, context) => {
-      // TODO move functionality to service or repo
       return await Promise.all(
         Object.values(ReactionType).map(async (type) => {
           return {

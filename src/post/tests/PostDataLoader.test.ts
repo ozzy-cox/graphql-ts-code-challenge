@@ -28,7 +28,7 @@ describe('listing posts using dataloader', () => {
 
     const postLoader = postService.postLoader
 
-    const postIds = post && (await postRepository.findNextPostIdsAfter(first, post.id))
+    const postIds = post && (await postRepository.findNextPagePostIds({ first, after: post.id }))
     const loadedPosts = filterTruthy(filterOutErrors(await postLoader.loadMany(postIds)))
 
     expect(postIds).toHaveLength(first)

@@ -4,7 +4,6 @@ export interface IPostRepository {
   create(post: Pick<IPost, 'content' | 'post'>): Promise<IPost | undefined>
   findById(ids: IPost['id'][]): Promise<IPost[]>
   findByParentId(id: IPost['id']): Promise<IPost[]>
-  findNextPostIdsAfter(first: number, after?: IPost['id']): Promise<IPost['id'][]>
   findNextPagePostIds({
     parentId,
     first,

@@ -32,39 +32,21 @@ export class PostRepository implements IPostRepository {
     first?: number
     after?: Post['id']
   }): Promise<Post['id'][]> {
-    let ids = []
-    // TODO remove duplication
+    let post
+    const where = { post: { id: parentId } }
+
     if (after) {
-      const post = (await this.repository.find({ id: after }))[0]
-      ids = await this.repository.find(
-        { post: { id: parentId }, createdAt: { $gt: post.createdAt } },
-        { fields: [], limit: first, orderBy: { createdAt: 'ASC' } }
-      )
-    } else {
-      ids = await this.repository.find(
-        { post: { id: parentId } },
-        { fields: [], limit: first, orderBy: { createdAt: 'ASC' } }
-      )
+      post = (await this.repository.find({ id: after }))[0]
+      Object.assign(where, {
+        createdAt: post && { $gt: post.createdAt }
+      })
     }
+
+    const ids = await this.repository.find(where, { fields: [], limit: first, orderBy: { createdAt: 'ASC' } })
 
     return ids.map((post) => post.id)
   }
 
-  async findNextPostIdsAfter(first: number, id?: Post['id']) {
-    let ids = []
-    // TODO remove duplication
-    if (id) {
-      const post = (await this.repository.find({ id }))[0]
-      ids = await this.repository.find(
-        { post: undefined, createdAt: { $gt: post.createdAt } },
-        { fields: [], limit: first, orderBy: { createdAt: 'ASC' } }
-      )
-    } else {
-      ids = await this.repository.find({ post: undefined }, { fields: [], limit: first, orderBy: { createdAt: 'ASC' } })
-    }
-
-    return ids.map((post) => post.id)
-  }
   async countByParentId(id: Post['id']) {
     return this.repository.count({ post: { id: id } })
   }

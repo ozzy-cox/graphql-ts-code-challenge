@@ -47,7 +47,7 @@ export class PostService implements INodeService<IPost> {
 
     if (first === undefined) throw new Error('Limit must be defined')
 
-    const postIds = await this.postRepository.findNextPostIdsAfter(first, after)
+    const postIds = await this.postRepository.findNextPagePostIds({ first, after })
     const posts = await this.postLoader.loadMany(postIds)
     return filterTruthy(filterOutErrors(posts))
   }

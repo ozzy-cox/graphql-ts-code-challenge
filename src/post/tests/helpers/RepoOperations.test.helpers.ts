@@ -100,22 +100,6 @@ export const postRepoTest = (repoHook: () => () => IPostRepository) => {
       expect(commentCounts).toEqual(3)
     })
 
-    test('should find next N item ids given a cursor', async () => {
-      // TODO This test mauy be depreacted if repo function is depreacted
-      const postRepository = getRepo()
-      const posts = await Promise.all(range(25).map((idx) => postRepository.create({ content: `Post content ${idx}` })))
-
-      const offset = 7
-      assert(posts[offset])
-      const after = posts[offset].id
-      const first = 5
-
-      const nextPostIds = await postRepository.findNextPostIdsAfter(first, after)
-      const expectedPostIds = posts.slice(offset, offset + first).map((post) => post?.id)
-
-      expect(nextPostIds.every((id, idx) => expectedPostIds[idx] === id))
-    })
-
     test('should find next page of post ids', async () => {
       const postRepository = getRepo()
       const posts = await Promise.all(range(25).map((idx) => postRepository.create({ content: `Post content ${idx}` })))

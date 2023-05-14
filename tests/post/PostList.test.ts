@@ -79,7 +79,6 @@ describe('querying server', () => {
     expect(response.body.singleResult.errors).toBeUndefined()
     const responseData = response.body.singleResult.data?.posts as ResolvedPost[]
     expect(responseData.map((post) => post.commentsConnection?.commentCount)).toEqual([0, 2, 0])
-    // TODO compare comments response with comment objects
 
     expect(responseData[0].reactionCounts).toEqual([
       {

@@ -51,20 +51,6 @@ export class MockPostRepository extends BaseMockRepo<IPost> implements IPostRepo
     }
   }
 
-  async findNextPostIdsAfter(first: number, id?: IPost['id']) {
-    const sortedEntities = [...this.entities].sort((a, b) => {
-      return b.createdAt.getTime() - a.createdAt.getTime()
-    })
-    if (id) {
-      const post = this.entities.find((post) => post.id === id)
-      assert(post)
-      const indexOfPost = sortedEntities.indexOf(post)
-      return sortedEntities.slice(indexOfPost, indexOfPost + first).map((post) => post.id)
-    } else {
-      return sortedEntities.slice(0, first).map((post) => post.id)
-    }
-  }
-
   async countByParentId(id: IPost['id']) {
     return this.entities.filter((post) => post.post?.id === id).length
   }
